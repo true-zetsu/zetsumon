@@ -1,6 +1,12 @@
 #ifndef GUARD_POKEMON_SUMMARY_SCREEN_H
 #define GUARD_POKEMON_SUMMARY_SCREEN_H
 
+#define SUMMARY_SCREEN_STAT_DISPLAY TRUE
+#define SUMMARY_SCREEN_DEFAULT      0
+#define SUMMARY_SCREEN_IV_MODE      1
+#define SUMMARY_SCREEN_EV_MODE      2
+      
+
 #include "main.h"
 
 extern u8 gLastViewedMonIndex;
