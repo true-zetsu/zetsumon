@@ -5,7 +5,6 @@
 #define SUMMARY_SCREEN_DEFAULT      0
 #define SUMMARY_SCREEN_IV_MODE      1
 #define SUMMARY_SCREEN_EV_MODE      2
-      
 
 #include "main.h"
 
