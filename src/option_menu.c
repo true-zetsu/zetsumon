@@ -16,6 +16,8 @@
 #include "gba/m4a_internal.h"
 #include "constants/rgb.h"
 #include "string_util.h"
+#include "event_data.h"
+#include "config/item.h"
 
 #define tMenuSelection data[0]
 #define tTextSpeed data[1]
@@ -24,9 +26,9 @@
 #define tSound data[4]
 #define tButtonMode data[5]
 #define tWindowFrameType data[6]
-#define tFollower data[7]
+#define tDifficulty data[7]
 #define tEffective data[8]
-#define tDifficulty data[9]
+#define tExpShare data[9]
 
 #if (DECAP_ENABLED) && (DECAP_MIRRORING) && !(DECAP_OPTION_MENU)
 #define AddTextPrinterParameterized3(a, b, c, d, e, f, str) AddTextPrinterParameterized3(a, b, c, d, e, f, MirrorPtr(str))
@@ -47,9 +49,9 @@ enum
 
 enum
 {
-    MENUITEM_FOLLOWER,
-    MENUITEM_EFFECTIVE,
     MENUITEM_DIFFICULTY,
+    MENUITEM_EFFECTIVE,
+    MENUITEM_EXP_SHARE,
     MENUITEM_CANCEL_PG2,
     MENUITEM_COUNT_PG2
 };
@@ -67,9 +69,9 @@ enum
 #define YPOS_BUTTONMODE   (MENUITEM_BUTTONMODE * 16)
 #define YPOS_FRAMETYPE    (MENUITEM_FRAMETYPE * 16)
 
-#define YPOS_FOLLOWER     (MENUITEM_FOLLOWER * 16)
-#define YPOS_EFFECTIVE    (MENUITEM_EFFECTIVE * 16)
 #define YPOS_DIFFICULTY   (MENUITEM_DIFFICULTY * 16)
+#define YPOS_EFFECTIVE    (MENUITEM_EFFECTIVE * 16)
+#define YPOS_EXP_SHARE    (MENUITEM_EXP_SHARE * 16)
 
 #define PAGE_COUNT        2
 
@@ -92,12 +94,12 @@ static u8 FrameType_ProcessInput(u8 selection);
 static void FrameType_DrawChoices(u8 selection);
 static u8 ButtonMode_ProcessInput(u8 selection);
 static void ButtonMode_DrawChoices(u8 selection);
-static u8 Follower_ProcessInput(u8 selection);
-static void Follower_DrawChoices(u8 selection);
-static u8 Effective_ProcessInput(u8 selection);
-static void Effective_DrawChoices(u8 selection);
 static u8 Difficulty_ProcessInput(u8 selection);
 static void Difficulty_DrawChoices(u8 selection);
+static u8 Effective_ProcessInput(u8 selection);
+static void Effective_DrawChoices(u8 selection);
+static u8 ExpShare_ProcessInput(u8 selection);
+static void ExpShare_DrawChoices(u8 selection);
 static void DrawHeaderText(void);
 static void DrawOptionMenuTexts(void);
 static void DrawBgWindowFrames(void);
@@ -122,9 +124,9 @@ static const u8 *const sOptionMenuItemsNames[MENUITEM_COUNT] =
 
 static const u8 *const sOptionMenuItemsNames_Pg2[MENUITEM_COUNT_PG2] =
 {
-    [MENUITEM_FOLLOWER]    = gText_Follower,
-    [MENUITEM_EFFECTIVE]   = gText_Effective,
     [MENUITEM_DIFFICULTY]  = gText_Difficulty,
+    [MENUITEM_EFFECTIVE]   = gText_Effective,
+    [MENUITEM_EXP_SHARE]   = gText_ExpShare,
     [MENUITEM_CANCEL_PG2]  = gText_OptionMenuCancel,
 };
 
@@ -199,9 +201,9 @@ static void ReadAllCurrentSettings(u8 taskId)
     gTasks[taskId].tSound = gSaveBlock2Ptr->optionsSound;
     gTasks[taskId].tButtonMode = gSaveBlock2Ptr->optionsButtonMode;
     gTasks[taskId].tWindowFrameType = gSaveBlock2Ptr->optionsWindowFrameType;
-    gTasks[taskId].tFollower = gSaveBlock2Ptr->follower;
-    gTasks[taskId].tEffective = gSaveBlock2Ptr->effective;
     gTasks[taskId].tDifficulty = gSaveBlock2Ptr->difficulty;
+    gTasks[taskId].tEffective = gSaveBlock2Ptr->effective;
+    gTasks[taskId].tExpShare = FlagGet(I_EXP_SHARE_FLAG);
 }
 
 static void DrawOptionsPg1(u8 taskId)
@@ -220,9 +222,9 @@ static void DrawOptionsPg1(u8 taskId)
 static void DrawOptionsPg2(u8 taskId)
 {
     ReadAllCurrentSettings(taskId);
-    Follower_DrawChoices(gTasks[taskId].tFollower);
-    Effective_DrawChoices(gTasks[taskId].tEffective);
     Difficulty_DrawChoices(gTasks[taskId].tDifficulty);
+    Effective_DrawChoices(gTasks[taskId].tEffective);
+    ExpShare_DrawChoices(gTasks[taskId].tExpShare);
     HighlightOptionMenuItem(gTasks[taskId].tMenuSelection);
     CopyWindowToVram(WIN_OPTIONS, COPYWIN_FULL);
 }
@@ -510,12 +512,12 @@ static void Task_OptionMenuProcessInput_Pg2(u8 taskId)
 
         switch (gTasks[taskId].tMenuSelection)
         {
-        case MENUITEM_FOLLOWER:
-            previousOption = gTasks[taskId].tFollower;
-            gTasks[taskId].tFollower = Follower_ProcessInput(gTasks[taskId].tFollower);
+        case MENUITEM_DIFFICULTY:
+            previousOption = gTasks[taskId].tDifficulty;
+            gTasks[taskId].tDifficulty = Difficulty_ProcessInput(gTasks[taskId].tDifficulty);
 
-            if (previousOption != gTasks[taskId].tFollower)
-                Follower_DrawChoices(gTasks[taskId].tFollower);
+            if (previousOption != gTasks[taskId].tDifficulty)
+                Difficulty_DrawChoices(gTasks[taskId].tDifficulty);
             break;
         case MENUITEM_EFFECTIVE:
             previousOption = gTasks[taskId].tEffective;
@@ -524,12 +526,12 @@ static void Task_OptionMenuProcessInput_Pg2(u8 taskId)
             if (previousOption != gTasks[taskId].tEffective)
                 Effective_DrawChoices(gTasks[taskId].tEffective);
             break;
-        case MENUITEM_DIFFICULTY:
-            previousOption = gTasks[taskId].tDifficulty;
-            gTasks[taskId].tDifficulty = Difficulty_ProcessInput(gTasks[taskId].tDifficulty);
+        case MENUITEM_EXP_SHARE:
+            previousOption = gTasks[taskId].tExpShare;
+            gTasks[taskId].tExpShare = ExpShare_ProcessInput(gTasks[taskId].tExpShare);
 
-            if (previousOption != gTasks[taskId].tDifficulty)
-                Difficulty_DrawChoices(gTasks[taskId].tDifficulty);
+            if (previousOption != gTasks[taskId].tExpShare)
+                ExpShare_DrawChoices(gTasks[taskId].tExpShare);
             break;
         default:
             return;
@@ -551,9 +553,9 @@ static void Task_OptionMenuSave(u8 taskId)
     gSaveBlock2Ptr->optionsSound = gTasks[taskId].tSound;
     gSaveBlock2Ptr->optionsButtonMode = gTasks[taskId].tButtonMode;
     gSaveBlock2Ptr->optionsWindowFrameType = gTasks[taskId].tWindowFrameType;
-    gSaveBlock2Ptr->follower = gTasks[taskId].tFollower;
-    gSaveBlock2Ptr->effective = gTasks[taskId].tEffective;
     gSaveBlock2Ptr->difficulty = gTasks[taskId].tDifficulty;
+    gSaveBlock2Ptr->effective = gTasks[taskId].tEffective;
+    gTasks[taskId].tExpShare == 0 ? FlagClear(I_EXP_SHARE_FLAG) : FlagSet(I_EXP_SHARE_FLAG);
 
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_OptionMenuFadeOut;
@@ -813,48 +815,6 @@ static void ButtonMode_DrawChoices(u8 selection)
     DrawOptionMenuChoice(gText_ButtonTypeLEqualsA, GetStringRightAlignXOffset(FONT_NORMAL, gText_ButtonTypeLEqualsA, 198), YPOS_BUTTONMODE, styles[2]);
 }
 
-static u8 Follower_ProcessInput(u8 selection)
-{
-    if (JOY_NEW(DPAD_LEFT | DPAD_RIGHT))
-    {
-        selection ^= 1;
-        sArrowPressed = TRUE;
-    }
-
-    return selection;
-}
-
-static void Follower_DrawChoices(u8 selection)
-{
-    u8 styles[2];
-    styles[0] = 0;
-    styles[1] = 0;
-    styles[selection] = 1;
-    DrawOptionMenuChoice(gText_FollowerOff, 104, YPOS_FOLLOWER, styles[0]);
-    DrawOptionMenuChoice(gText_FollowerOn, GetStringRightAlignXOffset(FONT_NORMAL, gText_FollowerOn, 198), YPOS_FOLLOWER, styles[1]);
-}
-
-static u8 Effective_ProcessInput(u8 selection)
-{
-    if (JOY_NEW(DPAD_LEFT | DPAD_RIGHT))
-    {
-        selection ^= 1;
-        sArrowPressed = TRUE;
-    }
-
-    return selection;
-}
-
-static void Effective_DrawChoices(u8 selection)
-{
-    u8 styles[2];
-    styles[0] = 0;
-    styles[1] = 0;
-    styles[selection] = 1;
-    DrawOptionMenuChoice(gText_EffectiveOff, 104, YPOS_EFFECTIVE, styles[0]);
-    DrawOptionMenuChoice(gText_EffectiveOn, GetStringRightAlignXOffset(FONT_NORMAL, gText_EffectiveOn, 198), YPOS_EFFECTIVE, styles[1]);
-}
-
 static u8 Difficulty_ProcessInput(u8 selection)
 {
     if (JOY_NEW(DPAD_RIGHT))
@@ -909,6 +869,48 @@ static void Difficulty_DrawChoices(u8 selection)
 
     DrawOptionMenuChoice(gText_DifficultyNormal, xMid, YPOS_DIFFICULTY, styles[1]);
     DrawOptionMenuChoice(gText_DifficultyHard, GetStringRightAlignXOffset(FONT_NORMAL, gText_DifficultyHard, 198), YPOS_DIFFICULTY, styles[2]);
+}
+
+static u8 Effective_ProcessInput(u8 selection)
+{
+    if (JOY_NEW(DPAD_LEFT | DPAD_RIGHT))
+    {
+        selection ^= 1;
+        sArrowPressed = TRUE;
+    }
+
+    return selection;
+}
+
+static void Effective_DrawChoices(u8 selection)
+{
+    u8 styles[2];
+    styles[0] = 0;
+    styles[1] = 0;
+    styles[selection] = 1;
+    DrawOptionMenuChoice(gText_EffectiveOff, 104, YPOS_EFFECTIVE, styles[0]);
+    DrawOptionMenuChoice(gText_EffectiveOn, GetStringRightAlignXOffset(FONT_NORMAL, gText_EffectiveOn, 198), YPOS_EFFECTIVE, styles[1]);
+}
+
+static u8 ExpShare_ProcessInput(u8 selection)
+{
+    if (JOY_NEW(DPAD_LEFT | DPAD_RIGHT))
+    {
+        selection ^= 1;
+        sArrowPressed = TRUE;
+    }
+
+    return selection;
+}
+
+static void ExpShare_DrawChoices(u8 selection)
+{
+    u8 styles[2];
+    styles[0] = 0;
+    styles[1] = 0;
+    styles[selection] = 1;
+    DrawOptionMenuChoice(gText_ExpShareOptOff, 104, YPOS_EXP_SHARE, styles[0]);
+    DrawOptionMenuChoice(gText_ExpShareOptOn, GetStringRightAlignXOffset(FONT_NORMAL, gText_ExpShareOptOn, 198), YPOS_EXP_SHARE, styles[1]);
 }
 
 static void DrawHeaderText(void)

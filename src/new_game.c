@@ -45,6 +45,7 @@
 #include "mystery_gift.h"
 #include "union_room_chat.h"
 #include "constants/items.h"
+#include "config/item.h"
 
 extern const u8 EventScript_ResetAllMapFlags[];
 
@@ -97,9 +98,9 @@ static void SetDefaultOptions(void)
     gSaveBlock2Ptr->optionsBattleSceneOff = FALSE;
     gSaveBlock2Ptr->regionMapZoom = FALSE;
 
-    gSaveBlock2Ptr->follower = OPTIONS_FOLLOWER_HIDE;
-    gSaveBlock2Ptr->effective = OPTIONS_EFFECTIVE_OFF;
     gSaveBlock2Ptr->difficulty = OPTIONS_DIFFICULTY_NORMAL;
+    gSaveBlock2Ptr->effective = OPTIONS_EFFECTIVE_ON;
+    FlagSet(I_EXP_SHARE_FLAG);
 }
 
 static void ClearPokedexFlags(void)
