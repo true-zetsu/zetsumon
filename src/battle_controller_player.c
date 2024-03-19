@@ -39,7 +39,6 @@
 #include "constants/songs.h"
 #include "constants/trainers.h"
 #include "constants/rgb.h"
-#include "constants/battle_move_effects.h"
 #include "level_caps.h"
 #include "battle_util.h"
 #include "event_data.h"
@@ -1738,7 +1737,6 @@ u8 TypeEffectiveness(u32 battler, u32 targetId)
 {
     u16 move;
     uq4_12_t modifier = UQ_4_12(1.0);
-    bool8 isInverse = FlagGet(B_FLAG_INVERSE_BATTLE);
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
 
     if (!gSaveBlock2Ptr->effective)
@@ -1749,30 +1747,18 @@ u8 TypeEffectiveness(u32 battler, u32 targetId)
     move = moveInfo->moves[gMoveSelectionCursor[battler]];
     modifier = CalcTypeEffectivenessMultiplier(move, gMovesInfo[move].type, battler, targetId, gBattleMons[targetId].ability, FALSE);
 
-    if (modifier == UQ_4_12(0.0)) 
+    switch (modifier)
     {
-        if (isInverse)
-            return B_WIN_TYPE_SUPER_EFF;
-        else
-            return B_WIN_TYPE_NO_EFF;
-    }
-    else if (modifier <= UQ_4_12(0.5))
-    {
-        if (isInverse)
-            return B_WIN_TYPE_SUPER_EFF;
-        else
-            return B_WIN_TYPE_NOT_VERY_EFF;
-    }
-    else if (modifier >= UQ_4_12(2.0))
-    {
-        if (isInverse)
-            return B_WIN_TYPE_NOT_VERY_EFF;
-        else
-            return B_WIN_TYPE_SUPER_EFF;
-    }
-    else
+    case UQ_4_12(0.0):
+        return B_WIN_TYPE_NO_EFF;
+    case UQ_4_12(0.5):
+        return B_WIN_TYPE_NOT_VERY_EFF;
+    case UQ_4_12(2.0):
+        return B_WIN_TYPE_SUPER_EFF;
+    case UQ_4_12(1.0):
+    default:
         return B_WIN_TYPE_NORMAL_EFF;
-
+    }
 }
 
 static void MoveSelectionDisplayMoveTypeDoubles(u32 battler, u32 targetId)
