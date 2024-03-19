@@ -1747,7 +1747,6 @@ u8 TypeEffectiveness(u32 battler, u32 targetId)
     }
 
     move = moveInfo->moves[gMoveSelectionCursor[battler]];
-    //move = gBattleMons[battler].moves[gMoveSelectionCursor[battler]];
     modifier = CalcTypeEffectivenessMultiplier(move, gMovesInfo[move].type, battler, targetId, gBattleMons[targetId].ability, FALSE);
 
     if (modifier == UQ_4_12(0.0)) 
