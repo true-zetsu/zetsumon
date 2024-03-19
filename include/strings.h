@@ -334,6 +334,11 @@ extern const u8 gText_DescriptionExit[];
 extern const u8 gText_DifficultyDesc[];
 extern const u8 gText_EffectiveDesc[];
 extern const u8 gText_ExpShareDesc[];
+extern const u8 gText_Warning[];
+extern const u8 gText_LowerDifficultyWarning[];
+extern const u8 gText_LowerDifficultyExit[];
+extern const u8 gText_HigherDifficultyWarning[];
+extern const u8 gText_HigherDifficultyExit[];
 
 extern const u8 gText_MaleSymbol[];
 extern const u8 gText_FemaleSymbol[];

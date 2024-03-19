@@ -59,8 +59,7 @@ enum
 enum
 {
     WIN_HEADER,
-    WIN_OPTIONS,
-    WIN_MSG
+    WIN_OPTIONS
 };
 
 #define YPOS_TEXTSPEED    (MENUITEM_TEXTSPEED * 16)
@@ -107,6 +106,7 @@ static void DrawBgWindowFrames(void);
 
 EWRAM_DATA static bool8 sArrowPressed = FALSE;
 EWRAM_DATA static u8 sCurrPage = 0;
+EWRAM_DATA static u8 sDiff = 0;
 
 static const u16 sOptionMenuText_Pal[] = INCBIN_U16("graphics/interface/option_menu_text.gbapal");
 // note: this is only used in the Japanese release
@@ -150,15 +150,6 @@ static const struct WindowTemplate sOptionMenuWinTemplates[] =
         .height = 14,
         .paletteNum = 1,
         .baseBlock = 0x36
-    },
-    [WIN_MSG] = {
-        .bg = 0,
-        .tilemapLeft = 1,
-        .tilemapTop = 15,
-        .width = 28,
-        .height = 4,
-        .paletteNum = 12,
-        .baseBlock = 0x004f
     },
     DUMMY_WIN_TEMPLATE
 };
@@ -256,6 +247,9 @@ static void DrawOptionsPg2(u8 taskId)
 void CB2_InitOptionMenu(void)
 {
     u8 taskId;
+
+    sDiff = gSaveBlock2Ptr->difficulty;
+
     switch (gMain.state)
     {
     default:
@@ -498,17 +492,22 @@ static void Task_OptionMenuFadeIn_Pg2(u8 taskId)
         gTasks[taskId].func = Task_OptionMenuProcessInput_Pg2;
 }
 
-// show description
-static void DisplayDescription(u8 taskId, const u8 *option, const u8 *description)
+// show message and tooltip at bottom of screen
+static void DisplayMessage(u8 taskId, const u8 *title, const u8 *message, const u8 *tooltip)
 {
-    FillWindowPixelBuffer(WIN_OPTIONS, PIXEL_FILL(1));
-    AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL, option, 8, 1, TEXT_SKIP_DRAW, NULL);
-    AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL, description, 8, 17, TEXT_SKIP_DRAW, NULL);
-    AddTextPrinterParameterized(WIN_OPTIONS, FONT_SMALL, gText_DescriptionExit, 8, 97, TEXT_SKIP_DRAW, NULL);
-    CopyWindowToVram(WIN_OPTIONS, COPYWIN_FULL);
-
     // removes highlight/puts highlight on whole screen
     SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(40, DISPLAY_WIDTH - 88));
+
+    FillWindowPixelBuffer(WIN_OPTIONS, PIXEL_FILL(1));
+    AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL, title, 8, 1, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL, message, 8, 17, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized(WIN_OPTIONS, FONT_SMALL, tooltip, 8, 97, TEXT_SKIP_DRAW, NULL);
+    CopyWindowToVram(WIN_OPTIONS, COPYWIN_FULL);
+}
+
+static void DisplayDescription(u8 taskId, const u8 *option, const u8 *description)
+{
+    DisplayMessage(taskId, option, description, gText_DescriptionExit);
 }
 
 // exit description on enter press
@@ -613,9 +612,55 @@ static void Task_OptionMenuProcessInput_Pg2(u8 taskId)
     }
 }
 
+static void DisplayWarning(u8 taskId, const u8 *message, const u8 *tooltip)
+{
+    DisplayMessage(taskId, gText_Warning, message, tooltip);
+}
+
+static void Task_HigherWarningProcessInput(u8 taskId)
+{
+    if (JOY_NEW(B_BUTTON))
+    {
+        FillWindowPixelBuffer(WIN_OPTIONS, PIXEL_FILL(1));
+        ClearStdWindowAndFrame(WIN_OPTIONS, FALSE);
+        gTasks[taskId].func = Task_ChangePage;
+    }
+}
+
+static void Task_LowerWarningProcessInput(u8 taskId)
+{
+    if (
+        (JOY_HELD(A_BUTTON) && JOY_NEW(START_BUTTON)) ||
+        (JOY_HELD(START_BUTTON) && JOY_NEW(A_BUTTON))
+    ) {
+        BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
+        gTasks[taskId].func = Task_OptionMenuFadeOut;
+    }
+    else if (JOY_NEW(B_BUTTON))
+    {
+        gSaveBlock2Ptr->difficulty = sDiff;
+        FillWindowPixelBuffer(WIN_OPTIONS, PIXEL_FILL(1));
+        ClearStdWindowAndFrame(WIN_OPTIONS, FALSE);
+        gTasks[taskId].func = Task_ChangePage;
+    }
+}
+
 static void Task_OptionMenuSave(u8 taskId)
 {
     SaveAllCurrentSettings(taskId);
+
+    // handle if difficulty is higher or lower than
+    // what it was when options menu was loaded
+    if (gSaveBlock2Ptr->difficulty > sDiff) {
+        DisplayWarning(taskId, gText_HigherDifficultyWarning, gText_HigherDifficultyExit);
+        gTasks[taskId].func = Task_HigherWarningProcessInput;
+        return;
+    } else if (gSaveBlock2Ptr->difficulty < sDiff) {
+        DisplayWarning(taskId, gText_LowerDifficultyWarning, gText_LowerDifficultyExit);
+        gTasks[taskId].func = Task_LowerWarningProcessInput;
+        return;
+    }
+
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_OptionMenuFadeOut;
 }
