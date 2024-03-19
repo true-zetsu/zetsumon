@@ -329,6 +329,11 @@ extern const u8 gText_ButtonMode[];
 extern const u8 gText_Difficulty[];
 extern const u8 gText_Effective[];
 extern const u8 gText_ExpShare[];
+extern const u8 gText_DescriptionEnter[];
+extern const u8 gText_DescriptionExit[];
+extern const u8 gText_DifficultyDesc[];
+extern const u8 gText_EffectiveDesc[];
+extern const u8 gText_ExpShareDesc[];
 
 extern const u8 gText_MaleSymbol[];
 extern const u8 gText_FemaleSymbol[];

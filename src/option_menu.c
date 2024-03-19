@@ -59,7 +59,8 @@ enum
 enum
 {
     WIN_HEADER,
-    WIN_OPTIONS
+    WIN_OPTIONS,
+    WIN_MSG
 };
 
 #define YPOS_TEXTSPEED    (MENUITEM_TEXTSPEED * 16)
@@ -150,6 +151,15 @@ static const struct WindowTemplate sOptionMenuWinTemplates[] =
         .paletteNum = 1,
         .baseBlock = 0x36
     },
+    [WIN_MSG] = {
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 15,
+        .width = 28,
+        .height = 4,
+        .paletteNum = 12,
+        .baseBlock = 0x004f
+    },
     DUMMY_WIN_TEMPLATE
 };
 
@@ -239,6 +249,7 @@ static void DrawOptionsPg2(u8 taskId)
     Effective_DrawChoices(gTasks[taskId].tEffective);
     ExpShare_DrawChoices(gTasks[taskId].tExpShare);
     HighlightOptionMenuItem(gTasks[taskId].tMenuSelection);
+    AddTextPrinterParameterized(WIN_OPTIONS, FONT_SMALL, gText_DescriptionEnter, 8, 97, TEXT_SKIP_DRAW, NULL);
     CopyWindowToVram(WIN_OPTIONS, COPYWIN_FULL);
 }
 
@@ -487,6 +498,29 @@ static void Task_OptionMenuFadeIn_Pg2(u8 taskId)
         gTasks[taskId].func = Task_OptionMenuProcessInput_Pg2;
 }
 
+// show description
+static void DisplayDescription(u8 taskId, const u8 *option, const u8 *description)
+{
+    FillWindowPixelBuffer(WIN_OPTIONS, PIXEL_FILL(1));
+    AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL, option, 8, 1, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL, description, 8, 17, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized(WIN_OPTIONS, FONT_SMALL, gText_DescriptionExit, 8, 97, TEXT_SKIP_DRAW, NULL);
+    CopyWindowToVram(WIN_OPTIONS, COPYWIN_FULL);
+
+    // removes highlight/puts highlight on whole screen
+    SetGpuReg(REG_OFFSET_WIN0V, WIN_RANGE(40, DISPLAY_WIDTH - 88));
+}
+
+// exit description on enter press
+static void Task_DisplayDescriptionProcessInput(u8 taskId)
+{
+    if (JOY_NEW(START_BUTTON)) {
+        FillWindowPixelBuffer(WIN_OPTIONS, PIXEL_FILL(1));
+        ClearStdWindowAndFrame(WIN_OPTIONS, FALSE);
+        gTasks[taskId].func = Task_ChangePage;
+    }
+}
+
 static void Task_OptionMenuProcessInput_Pg2(u8 taskId)
 {
     if (JOY_NEW(L_BUTTON) || JOY_NEW(R_BUTTON))
@@ -520,6 +554,25 @@ static void Task_OptionMenuProcessInput_Pg2(u8 taskId)
         else
             gTasks[taskId].tMenuSelection = 0;
         HighlightOptionMenuItem(gTasks[taskId].tMenuSelection);
+    }
+    else if (JOY_NEW(START_BUTTON))
+    {
+        switch (gTasks[taskId].tMenuSelection)
+        {
+        case MENUITEM_DIFFICULTY:
+            DisplayDescription(taskId, gText_Difficulty, gText_DifficultyDesc);
+            break;
+        case MENUITEM_EFFECTIVE:
+            DisplayDescription(taskId, gText_Effective, gText_EffectiveDesc);
+            break;
+        case MENUITEM_EXP_SHARE:
+            DisplayDescription(taskId, gText_ExpShare, gText_ExpShareDesc);
+            break;
+        default:
+            return;
+        }
+
+        gTasks[taskId].func = Task_DisplayDescriptionProcessInput;
     }
     else
     {
