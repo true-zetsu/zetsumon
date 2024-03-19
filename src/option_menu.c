@@ -192,6 +192,19 @@ static void VBlankCB(void)
     TransferPlttBuffer();
 }
 
+static void SaveAllCurrentSettings(u8 taskId)
+{
+    gSaveBlock2Ptr->optionsTextSpeed = gTasks[taskId].tTextSpeed;
+    gSaveBlock2Ptr->optionsBattleSceneOff = gTasks[taskId].tBattleSceneOff;
+    gSaveBlock2Ptr->optionsBattleStyle = gTasks[taskId].tBattleStyle;
+    gSaveBlock2Ptr->optionsSound = gTasks[taskId].tSound;
+    gSaveBlock2Ptr->optionsButtonMode = gTasks[taskId].tButtonMode;
+    gSaveBlock2Ptr->optionsWindowFrameType = gTasks[taskId].tWindowFrameType;
+    gSaveBlock2Ptr->difficulty = gTasks[taskId].tDifficulty;
+    gSaveBlock2Ptr->effective = gTasks[taskId].tEffective;
+    gTasks[taskId].tExpShare == 0 ? FlagClear(I_EXP_SHARE_FLAG) : FlagSet(I_EXP_SHARE_FLAG);
+}
+
 static void ReadAllCurrentSettings(u8 taskId)
 {
     gTasks[taskId].tMenuSelection = 0;
@@ -353,6 +366,8 @@ static void Task_ChangePage(u8 taskId)
     DrawHeaderText();
     PutWindowTilemap(1);
     DrawOptionMenuTexts();
+    SaveAllCurrentSettings(taskId);
+    ReadAllCurrentSettings(taskId);
     switch(sCurrPage)
     {
     case 0:
@@ -547,16 +562,7 @@ static void Task_OptionMenuProcessInput_Pg2(u8 taskId)
 
 static void Task_OptionMenuSave(u8 taskId)
 {
-    gSaveBlock2Ptr->optionsTextSpeed = gTasks[taskId].tTextSpeed;
-    gSaveBlock2Ptr->optionsBattleSceneOff = gTasks[taskId].tBattleSceneOff;
-    gSaveBlock2Ptr->optionsBattleStyle = gTasks[taskId].tBattleStyle;
-    gSaveBlock2Ptr->optionsSound = gTasks[taskId].tSound;
-    gSaveBlock2Ptr->optionsButtonMode = gTasks[taskId].tButtonMode;
-    gSaveBlock2Ptr->optionsWindowFrameType = gTasks[taskId].tWindowFrameType;
-    gSaveBlock2Ptr->difficulty = gTasks[taskId].tDifficulty;
-    gSaveBlock2Ptr->effective = gTasks[taskId].tEffective;
-    gTasks[taskId].tExpShare == 0 ? FlagClear(I_EXP_SHARE_FLAG) : FlagSet(I_EXP_SHARE_FLAG);
-
+    SaveAllCurrentSettings(taskId);
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     gTasks[taskId].func = Task_OptionMenuFadeOut;
 }
