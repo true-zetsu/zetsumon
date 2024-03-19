@@ -40,6 +40,8 @@
 #include "constants/trainers.h"
 #include "constants/rgb.h"
 #include "level_caps.h"
+#include "battle_util.h"
+#include "event_data.h"
 
 static void PlayerBufferExecCompleted(u32 battler);
 static void PlayerHandleLoadMonSprite(u32 battler);
@@ -81,6 +83,7 @@ static void HandleInputChooseTarget(u32 battler);
 static void HandleInputChooseMove(u32 battler);
 static void MoveSelectionDisplayPpNumber(u32 battler);
 static void MoveSelectionDisplayPpString(u32 battler);
+static void MoveSelectionDisplayMoveTypeDoubles(u32 battler, u32 targetId);
 static void MoveSelectionDisplayMoveType(u32 battler);
 static void MoveSelectionDisplayMoveNames(u32 battler);
 static void HandleMoveSwitching(u32 battler);
@@ -512,6 +515,7 @@ static void HandleInputChooseTarget(u32 battler)
                     i++;
                     break;
                 }
+                MoveSelectionDisplayMoveTypeDoubles(battler, GetBattlerPosition(gMultiUsePlayerCursor));
 
                 if (gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor]
                  || !CanTargetBattler(battler, gMultiUsePlayerCursor, move))
@@ -562,6 +566,7 @@ static void HandleInputChooseTarget(u32 battler)
                     i++;
                     break;
                 }
+                MoveSelectionDisplayMoveTypeDoubles(battler, GetBattlerPosition(gMultiUsePlayerCursor));
 
                 if (gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor]
                  || !CanTargetBattler(battler, gMultiUsePlayerCursor, move))
@@ -788,6 +793,7 @@ static void HandleInputChooseMove(u32 battler)
             else
                 gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 
+            MoveSelectionDisplayMoveTypeDoubles(battler, GetBattlerPosition(gMultiUsePlayerCursor));
             gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = SpriteCB_ShowAsMoveTarget;
             break;
         case 2:
@@ -1727,11 +1733,57 @@ static void MoveSelectionDisplayPpNumber(u32 battler)
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
 }
 
+u8 TypeEffectiveness(u32 battler, u32 targetId)
+{
+    u16 move;
+    uq4_12_t modifier = UQ_4_12(1.0);
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
+
+    if (!gSaveBlock2Ptr->effective)
+    {
+        return B_WIN_TYPE_NORMAL_EFF;
+    }
+
+    move = moveInfo->moves[gMoveSelectionCursor[battler]];
+    modifier = CalcTypeEffectivenessMultiplier(move, gMovesInfo[move].type, battler, targetId, gBattleMons[targetId].ability, FALSE);
+
+    switch (modifier)
+    {
+    case UQ_4_12(0.0):
+        return B_WIN_TYPE_NO_EFF;
+    case UQ_4_12(0.5):
+        return B_WIN_TYPE_NOT_VERY_EFF;
+    case UQ_4_12(2.0):
+        return B_WIN_TYPE_SUPER_EFF;
+    case UQ_4_12(1.0):
+    default:
+        return B_WIN_TYPE_NORMAL_EFF;
+    }
+}
+
+static void MoveSelectionDisplayMoveTypeDoubles(u32 battler, u32 targetId)
+{
+	u8 *txtPtr;
+	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleResources->bufferA[battler][4]);
+
+	txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
+	txtPtr[0] = EXT_CTRL_CODE_BEGIN;
+	txtPtr++;
+	txtPtr[0] = 6;
+	txtPtr++;
+	txtPtr[0] = 1;
+	txtPtr++;
+
+	StringCopy(txtPtr, gTypesInfo[gMovesInfo[moveInfo->moves[gMoveSelectionCursor[battler]]].type].name);
+	BattlePutTextOnWindow(gDisplayedStringBattle, TypeEffectiveness(battler, targetId));
+}
+
 static void MoveSelectionDisplayMoveType(u32 battler)
 {
     u8 *txtPtr;
     u8 type;
     u32 speciesId;
+    u8 typeColor = IsDoubleBattle() ? B_WIN_MOVE_TYPE : TypeEffectiveness(battler, GetBattlerAtPosition(BATTLE_OPPOSITE(GetBattlerPosition(battler))));
     struct Pokemon *mon;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
 
@@ -1756,7 +1808,7 @@ static void MoveSelectionDisplayMoveType(u32 battler)
         type = gMovesInfo[moveInfo->moves[gMoveSelectionCursor[battler]]].type;
 
     StringCopy(txtPtr, gTypesInfo[type].name);
-    BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_MOVE_TYPE);
+    BattlePutTextOnWindow(gDisplayedStringBattle, typeColor);
 }
 
 void MoveSelectionCreateCursorAt(u8 cursorPosition, u8 baseTileNum)
