@@ -49,6 +49,26 @@ gText_Birch_YourePlayer::
 	.string "I get it now!\p"
 	.string "$"
 
+gText_Birch_Difficulty:: 
+	.string "One last thing before we get started...\p"
+	.string "There are three different difficulties\n"
+	.string "you can choose to play on.\p"
+	.string "EASY has no restrictions and the\n"
+	.string "easiest AI.\p"
+	.string "NORMAL limits you to 4 items per\n"
+	.string "trainer battle, introduces soft\l"
+	.string "level caps, and has difficult AI.\p"
+	.string "HARD does not allow items in trainer\n"
+	.string "battles, has harsher level caps, and\l"
+	.string "the hardest AI.\p"
+	.string "You can lower the difficulty using\n"
+	.string "the OPTIONS menu, but you cannot\l"
+	.string "increase difficulty once it has\l"
+	.string "been lowered.\p"
+	.string "Which difficulty would you like to\n"
+	.string "play on?\p"
+	.string "$"
+
 gText_Birch_AreYouReady::
 	.string "All right, are you ready?\p"
 	.string "Your very own adventure is about\n"
