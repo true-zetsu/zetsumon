@@ -57,6 +57,7 @@
 #include "constants/battle_move_effects.h"
 #include "constants/battle_string_ids.h"
 #include "constants/battle_partner.h"
+#include "constants/global.h"
 #include "constants/hold_effects.h"
 #include "constants/items.h"
 #include "constants/moves.h"
@@ -230,6 +231,8 @@ EWRAM_DATA u16 gBallToDisplay = 0;
 EWRAM_DATA bool8 gLastUsedBallMenuPresent = FALSE;
 EWRAM_DATA u8 gPartyCriticalHits[PARTY_SIZE] = {0};
 EWRAM_DATA static u8 sTriedEvolving = 0;
+EWRAM_DATA static u8 sUsedItems = 0;
+EWRAM_DATA static u8 sMaxItems = 0;
 
 void (*gPreBattleCallback1)(void);
 void (*gBattleMainFunc)(void);
@@ -878,6 +881,21 @@ static void CB2_InitBattleInternal(void)
     }
 
     gBattleCommunication[MULTIUSE_STATE] = 0;
+    
+    sUsedItems = 0;
+    switch (gSaveBlock2Ptr->difficulty)
+    {
+        case OPTIONS_DIFFICULTY_EASY:
+            sMaxItems = MAX_ITEMS_EASY;
+            break;
+        case OPTIONS_DIFFICULTY_HARD:
+            sMaxItems = MAX_ITEMS_HARD;
+            break;
+        case OPTIONS_DIFFICULTY_NORMAL:
+        default:
+            sMaxItems = MAX_ITEMS_NORMAL;
+            break;
+    }
 }
 
 #define BUFFER_PARTY_VS_SCREEN_STATUS(party, flags, i)                      \
@@ -4505,7 +4523,9 @@ static void HandleTurnActionSelectionState(void)
                         return;
                     }
 
-                    if (((gBattleTypeFlags & (BATTLE_TYPE_LINK
+                    if (
+                        ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) && sUsedItems >= sMaxItems) || 
+                        ((gBattleTypeFlags & (BATTLE_TYPE_LINK
                                             | BATTLE_TYPE_FRONTIER_NO_PYRAMID
                                             | BATTLE_TYPE_EREADER_TRAINER
                                             | BATTLE_TYPE_RECORDED_LINK))
@@ -4524,6 +4544,7 @@ static void HandleTurnActionSelectionState(void)
                     {
                         BtlController_EmitChooseItem(battler, BUFFER_A, gBattleStruct->battlerPartyOrders[battler]);
                         MarkBattlerForControllerExec(battler);
+                        sUsedItems += 1;
                     }
                     break;
                 case B_ACTION_SWITCH:
