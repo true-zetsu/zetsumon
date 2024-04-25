@@ -3,6 +3,7 @@
 *.i
 *.elf
 *.gba
+pokeemerald.log
 !data/*.gba
 *.sgm
 *.sa1
