@@ -182,11 +182,11 @@ static const struct SpriteFrameImage sPicTable_Woman5[] = {
 };
 
 static const struct SpriteFrameImage sPicTable_Youngster[] = {
-    overworld_ascending_frames(gObjectEventPic_Youngster, 2, 4),
+    overworld_ascending_frames(gObjectEventPic_Youngster, 4, 4),
 };
 
 static const struct SpriteFrameImage sPicTable_BugCatcher[] = {
-    overworld_ascending_frames(gObjectEventPic_BugCatcher, 2, 4),
+    overworld_ascending_frames(gObjectEventPic_BugCatcher, 4, 4),
 };
 
 static const struct SpriteFrameImage sPicTable_PsychicM[] = {
