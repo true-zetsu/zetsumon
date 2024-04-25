@@ -249,6 +249,10 @@ static void MainMenu_FormatSavegamePokedex(void);
 static void MainMenu_FormatSavegameTime(void);
 static void MainMenu_FormatSavegameBadges(void);
 static void NewGameBirchSpeech_CreateDialogueWindowBorder(u8, u8, u8, u8, u8, u8);
+static void Task_NewGameBirchSpeech_Difficulty(u8);
+static void Task_NewGameBirchSpeech_WaitToShowDifficultyMenu(u8);
+static void NewGameBirchSpeech_ShowDifficultyMenu(void);
+static void Task_NewGameBirchSpeech_ChooseDifficulty(u8);
 
 // .rodata
 
@@ -406,6 +410,15 @@ static const struct WindowTemplate sNewGameBirchSpeechTextWindows[] =
         .paletteNum = 15,
         .baseBlock = 0x85
     },
+    {
+        .bg = 0,
+        .tilemapLeft = 3,
+        .tilemapTop = 4,
+        .width = 6,
+        .height = 8,
+        .paletteNum = 15,
+        .baseBlock = 0x6D
+    },
     DUMMY_WIN_TEMPLATE
 };
 
@@ -461,6 +474,13 @@ static const union AffineAnimCmd *const sSpriteAffineAnimTable_PlayerShrink[] =
 static const struct MenuAction sMenuActions_Gender[] = {
     {gText_BirchBoy, {NULL}},
     {gText_BirchGirl, {NULL}}
+};
+
+static const struct MenuAction sMenuActions_Difficulty[] = {
+	{gText_BirchEasy, {NULL}},
+	{gText_BirchNormal, {NULL}},
+	{gText_BirchHard, {NULL}},
+	{gText_BirchRepeat, {NULL}}
 };
 
 static const u8 *const sMalePresetNames[] = {
@@ -1682,7 +1702,69 @@ static void Task_NewGameBirchSpeech_ReshowBirchLotad(u8 taskId)
         NewGameBirchSpeech_ClearWindow(0);
         StringExpandPlaceholders(gStringVar4, gText_Birch_YourePlayer);
         AddTextPrinterForMessage(TRUE);
-        gTasks[taskId].func = Task_NewGameBirchSpeech_WaitForSpriteFadeInAndTextPrinter;
+        gTasks[taskId].func = Task_NewGameBirchSpeech_Difficulty; //Task_NewGameBirchSpeech_WaitForSpriteFadeInAndTextPrinter;
+    }
+}
+
+static void Task_NewGameBirchSpeech_Difficulty(u8 taskId)
+{
+	if (!gPaletteFade.active && !RunTextPrintersAndIsPrinter0Active())
+	{
+		NewGameBirchSpeech_ClearWindow(0);
+		StringExpandPlaceholders(gStringVar4, gText_Birch_Difficulty);
+		AddTextPrinterForMessage(1);
+		gTasks[taskId].func = Task_NewGameBirchSpeech_WaitToShowDifficultyMenu;
+	}
+}
+
+static void Task_NewGameBirchSpeech_WaitToShowDifficultyMenu(u8 taskId)
+{
+	if (!RunTextPrintersAndIsPrinter0Active())
+	{
+		NewGameBirchSpeech_ShowDifficultyMenu();
+		gTasks[taskId].func = Task_NewGameBirchSpeech_ChooseDifficulty;
+	}
+}
+
+static void NewGameBirchSpeech_ShowDifficultyMenu(void)
+{
+	DrawMainMenuWindowBorder(&sNewGameBirchSpeechTextWindows[3], 0xF3);
+	FillWindowPixelBuffer(3, PIXEL_FILL(1));
+	PrintMenuTable(3, ARRAY_COUNT(sMenuActions_Difficulty), sMenuActions_Difficulty);
+	InitMenuInUpperLeftCornerNormal(3, ARRAY_COUNT(sMenuActions_Difficulty), ARRAY_COUNT(sMenuActions_Difficulty) - 1);
+	PutWindowTilemap(3);
+	CopyWindowToVram(3, COPYWIN_FULL);
+}
+
+static void Task_NewGameBirchSpeech_ChooseDifficulty(u8 taskId)
+{
+    int difficulty = Menu_ProcessInputNoWrap();
+
+    switch (difficulty)
+    {
+        case OPTIONS_DIFFICULTY_EASY:
+            PlaySE(SE_SELECT);
+            gSaveBlock2Ptr->difficulty = difficulty;
+            NewGameBirchSpeech_ClearGenderWindow(3, 1);
+            gTasks[taskId].func = Task_NewGameBirchSpeech_WaitForSpriteFadeInAndTextPrinter;
+            break;
+        case OPTIONS_DIFFICULTY_NORMAL:
+            PlaySE(SE_SELECT);
+            gSaveBlock2Ptr->difficulty = difficulty;
+            NewGameBirchSpeech_ClearGenderWindow(3, 1);
+            gTasks[taskId].func = Task_NewGameBirchSpeech_WaitForSpriteFadeInAndTextPrinter;
+            break;
+        case OPTIONS_DIFFICULTY_HARD:
+            PlaySE(SE_SELECT);
+            gSaveBlock2Ptr->difficulty = difficulty;
+            NewGameBirchSpeech_ClearGenderWindow(3, 1);
+            gTasks[taskId].func = Task_NewGameBirchSpeech_WaitForSpriteFadeInAndTextPrinter;
+            break;
+        case (ARRAY_COUNT(sMenuActions_Difficulty) - 1):
+            PlaySE(SE_SELECT);
+            NewGameBirchSpeech_ClearGenderWindow(3, 1);
+            gTasks[taskId].func = Task_NewGameBirchSpeech_Difficulty;
+            break;
     }
 }
 
