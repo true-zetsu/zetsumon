@@ -1796,6 +1796,24 @@
 .Ldynmultichoice_\@_2:
 	.endm
 
+	.macro showdescription
+	.byte 0xe3
+	.endm
+
+	.macro showitemdesc
+	setvar VAR_0x8009, 0
+	showdescription
+	.endm
+
+	.macro showberrydesc
+	setvar VAR_0x8009, 1
+	showdescription
+	.endm
+
+	.macro hideitemdesc
+	.byte 0xe4
+	.endm
+
 	@ Displays a multichoice box from which the user can choose a selection, and blocks script execution until a selection is made.
 	@ Lists of options are provided in argv.
 	@ If ignoreBPress is set to a non-zero value, then the user will not be allowed to back out of the multichoice with the B button.
