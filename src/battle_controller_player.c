@@ -1735,7 +1735,7 @@ static void MoveSelectionDisplayPpNumber(u32 battler)
 
 u8 GetHiddenPowerType(u32 battler)
 {
-    u8 type;
+    u8 type, typeAdjusted;
     u8 typeBits  = ((GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_HP_IV) & 1) << 0)
                     | ((GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_ATK_IV) & 1) << 1)
                     | ((GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_DEF_IV) & 1) << 2)
@@ -1746,7 +1746,9 @@ u8 GetHiddenPowerType(u32 battler)
     u8 typeHP = (15 * typeBits) / 63 + 1;
     typeHP |= 0xC0;
     type = typeHP & 0x3F;
-    return type;
+    typeAdjusted = (type < TYPE_MYSTERY) ? type : (type + 1);
+
+    return typeAdjusted;
 }
 
 u8 TypeEffectiveness(u32 battler, u32 targetId)
