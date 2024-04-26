@@ -1816,7 +1816,6 @@ static void MoveSelectionDisplayMoveType(u32 battler)
         u8 typeHP = (15 * typeBits) / 63 + 1;
         typeHP |= 0xC0;
         type = typeHP & 0x3F;
-        type += 1;
 
         StringCopy(txtPtr, gTypesInfo[type].name);
     }
