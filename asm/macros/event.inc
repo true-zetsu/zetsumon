@@ -1797,7 +1797,7 @@
 	.endm
 
 	.macro showdescription
-	.byte 0xe3
+	.byte 0xe5
 	.endm
 
 	.macro showitemdesc
@@ -1811,7 +1811,7 @@
 	.endm
 
 	.macro hideitemdesc
-	.byte 0xe4
+	.byte 0xe6
 	.endm
 
 	@ Displays a multichoice box from which the user can choose a selection, and blocks script execution until a selection is made.
