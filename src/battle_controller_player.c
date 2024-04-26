@@ -98,6 +98,7 @@ static void Task_UpdateLvlInHealthbox(u8);
 static void PrintLinkStandbyMsg(void);
 
 static void ReloadMoveNames(u32 battler);
+static void MoveSelectionDisplaySplitIcon(u32 battler);
 
 static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32 battler) =
 {
@@ -1825,17 +1826,13 @@ static void MoveSelectionDisplayMoveType(u32 battler)
             type = gMovesInfo[MOVE_IVY_CUDGEL].type;
     }
     else if (moveInfo->moves[gMoveSelectionCursor[battler]] == MOVE_HIDDEN_POWER) 
-    {
         type = GetHiddenPowerType(battler);
-
-        StringCopy(txtPtr, gTypesInfo[type].name);
-        BattlePutTextOnWindow(gDisplayedStringBattle, typeColor);
-    }
     else
         type = gMovesInfo[moveInfo->moves[gMoveSelectionCursor[battler]]].type;
 
     StringCopy(txtPtr, gTypesInfo[type].name);
     BattlePutTextOnWindow(gDisplayedStringBattle, typeColor);
+    MoveSelectionDisplaySplitIcon(battler);
 }
 
 void MoveSelectionCreateCursorAt(u8 cursorPosition, u8 baseTileNum)
@@ -2397,4 +2394,16 @@ static void PlayerHandleBattleDebug(u32 battler)
     BeginNormalPaletteFade(-1, 0, 0, 0x10, 0);
     SetMainCallback2(CB2_BattleDebugMenu);
     gBattlerControllerFuncs[battler] = Controller_WaitForDebug;
+}
+
+static void MoveSelectionDisplaySplitIcon(u32 battler){
+    static const u16 sSplitIcons_Pal[] = INCBIN_U16("graphics/interface/split_icons_battle.gbapal");
+    static const u8 sSplitIcons_Gfx[] = INCBIN_U8("graphics/interface/split_icons_battle.4bpp");
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
+    int icon = GetBattleMoveCategory(moveInfo->moves[gMoveSelectionCursor[battler]]);
+
+    LoadPalette(sSplitIcons_Pal, 10 * 0x10, 0x20);
+    BlitBitmapToWindow(B_WIN_SPLIT_ICON, sSplitIcons_Gfx + 0x80 * icon, 0, 0, 16, 16);
+    PutWindowTilemap(B_WIN_SPLIT_ICON);
+    CopyWindowToVram(B_WIN_SPLIT_ICON, 3);
 }
