@@ -1733,9 +1733,26 @@ static void MoveSelectionDisplayPpNumber(u32 battler)
     BattlePutTextOnWindow(gDisplayedStringBattle, B_WIN_PP_REMAINING);
 }
 
+u8 GetHiddenPowerType(u32 battler)
+{
+    u8 type;
+    u8 typeBits  = ((GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_HP_IV) & 1) << 0)
+                    | ((GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_ATK_IV) & 1) << 1)
+                    | ((GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_DEF_IV) & 1) << 2)
+                    | ((GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_SPEED_IV) & 1) << 3)
+                    | ((GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_SPATK_IV) & 1) << 4)
+                    | ((GetMonData(&gPlayerParty[gBattlerPartyIndexes[battler]], MON_DATA_SPDEF_IV) & 1) << 5);
+
+    u8 typeHP = (15 * typeBits) / 63 + 1;
+    typeHP |= 0xC0;
+    type = typeHP & 0x3F;
+    return type;
+}
+
 u8 TypeEffectiveness(u32 battler, u32 targetId)
 {
     u16 move;
+    u8 type;
     uq4_12_t modifier = UQ_4_12(1.0);
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
 
@@ -1745,7 +1762,8 @@ u8 TypeEffectiveness(u32 battler, u32 targetId)
     }
 
     move = moveInfo->moves[gMoveSelectionCursor[battler]];
-    modifier = CalcTypeEffectivenessMultiplier(move, gMovesInfo[move].type, battler, targetId, gBattleMons[targetId].ability, FALSE);
+    type = (move == MOVE_HIDDEN_POWER) ? GetHiddenPowerType(battler) : gMovesInfo[move].type;
+    modifier = CalcTypeEffectivenessMultiplier(move, type, battler, targetId, gBattleMons[targetId].ability, FALSE);
 
     switch (modifier)
     {
@@ -1803,6 +1821,13 @@ static void MoveSelectionDisplayMoveType(u32 battler)
             type = gBattleMons[battler].type2;
         else
             type = gMovesInfo[MOVE_IVY_CUDGEL].type;
+    }
+    else if (moveInfo->moves[gMoveSelectionCursor[battler]] == MOVE_HIDDEN_POWER) 
+    {
+        type = GetHiddenPowerType(battler);
+
+        StringCopy(txtPtr, gTypesInfo[type].name);
+        BattlePutTextOnWindow(gDisplayedStringBattle, typeColor);
     }
     else
         type = gMovesInfo[moveInfo->moves[gMoveSelectionCursor[battler]]].type;
