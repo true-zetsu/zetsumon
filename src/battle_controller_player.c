@@ -100,6 +100,30 @@ static void PrintLinkStandbyMsg(void);
 static void ReloadMoveNames(u32 battler);
 static void MoveSelectionDisplaySplitIcon(u32 battler);
 
+static const u8 sStabTypeNames[NUMBER_OF_MON_TYPES][TYPE_NAME_LENGTH + 1] = 
+{
+    [TYPE_NORMAL]   =   _("Norm+"),
+    [TYPE_FIGHTING] =   _("Fight+"),
+    [TYPE_FLYING]   =   _("Fly+"),
+    [TYPE_POISON]   =   _("Psn+"),
+    [TYPE_GROUND]   =   _("Grnd+"),
+    [TYPE_ROCK]     =   _("Rock+"),
+    [TYPE_BUG]      =   _("Bug+"),
+    [TYPE_GHOST]    =   _("Ghost+"),
+    [TYPE_STEEL]    =   _("Steel+"),
+    [TYPE_MYSTERY]  =   _("???+"),
+    [TYPE_FIRE]     =   _("Fire+"),
+    [TYPE_WATER]    =   _("Water+"),
+    [TYPE_GRASS]    =   _("Grass+"),
+    [TYPE_ELECTRIC] =   _("Elec+"),
+    [TYPE_PSYCHIC]  =   _("Psy+"),
+    [TYPE_ICE]      =   _("Ice+"),
+    [TYPE_DRAGON]   =   _("Drgn+"),
+    [TYPE_DARK]     =   _("Dark+"),
+    [TYPE_FAIRY]    =   _("Fairy+"),
+    //[TYPE_STELLAR]  =   _("Stlr+"),
+};
+
 static void (*const sPlayerBufferCommands[CONTROLLER_CMDS_COUNT])(u32 battler) =
 {
     [CONTROLLER_GETMONDATA]               = BtlController_HandleGetMonData,
@@ -1797,6 +1821,7 @@ static void MoveSelectionDisplayMoveTypeDoubles(u32 battler, u32 targetId)
 
 	StringCopy(txtPtr, gTypesInfo[gMovesInfo[moveInfo->moves[gMoveSelectionCursor[battler]]].type].name);
 	BattlePutTextOnWindow(gDisplayedStringBattle, TypeEffectiveness(battler, targetId));
+    MoveSelectionDisplaySplitIcon(battler);
 }
 
 static void MoveSelectionDisplayMoveType(u32 battler)
@@ -1805,7 +1830,7 @@ static void MoveSelectionDisplayMoveType(u32 battler)
     u8 type;
     u32 speciesId;
     u8 typeColor = IsDoubleBattle() ? B_WIN_MOVE_TYPE : TypeEffectiveness(battler, GetBattlerAtPosition(BATTLE_OPPOSITE(GetBattlerPosition(battler))));
-    struct Pokemon *mon;
+    struct Pokemon *mon = &GetSideParty(GetBattlerSide(battler))[gBattlerPartyIndexes[battler]];;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct *)(&gBattleResources->bufferA[battler][4]);
 
     txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
@@ -1815,7 +1840,6 @@ static void MoveSelectionDisplayMoveType(u32 battler)
 
     if (moveInfo->moves[gMoveSelectionCursor[battler]] == MOVE_IVY_CUDGEL)
     {
-        mon = &GetSideParty(GetBattlerSide(battler))[gBattlerPartyIndexes[battler]];
         speciesId = GetMonData(mon, MON_DATA_SPECIES);
 
         if (speciesId == SPECIES_OGERPON_WELLSPRING_MASK || speciesId == SPECIES_OGERPON_WELLSPRING_MASK_TERA
@@ -1830,7 +1854,13 @@ static void MoveSelectionDisplayMoveType(u32 battler)
     else
         type = gMovesInfo[moveInfo->moves[gMoveSelectionCursor[battler]]].type;
 
-    StringCopy(txtPtr, gTypesInfo[type].name);
+
+    if (!(IS_MOVE_STATUS(moveInfo->moves[gMoveSelectionCursor[battler]])) &&
+        (type == gBattleMons[battler].type1 || type == gBattleMons[battler].type2))
+        StringCopy(txtPtr, sStabTypeNames[type]);
+    else
+        StringCopy(txtPtr, gTypesInfo[type].name);
+
     BattlePutTextOnWindow(gDisplayedStringBattle, typeColor);
     MoveSelectionDisplaySplitIcon(battler);
 }
