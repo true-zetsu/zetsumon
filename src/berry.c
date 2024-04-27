@@ -2153,8 +2153,6 @@ void ObjectEventInteractionGetBerryCountString(void)
     }
     else
         gSpecialVar_Result = FALSE;
-    
-    
 }
 
 void Bag_ChooseBerry(void)
