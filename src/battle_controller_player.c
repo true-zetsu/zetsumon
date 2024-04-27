@@ -1809,6 +1809,8 @@ u8 TypeEffectiveness(u32 battler, u32 targetId)
 static void MoveSelectionDisplayMoveTypeDoubles(u32 battler, u32 targetId)
 {
 	u8 *txtPtr;
+    u8 type;
+    const u8 *name;
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleResources->bufferA[battler][4]);
 
 	txtPtr = StringCopy(gDisplayedStringBattle, gText_MoveInterfaceType);
@@ -1819,7 +1821,15 @@ static void MoveSelectionDisplayMoveTypeDoubles(u32 battler, u32 targetId)
 	txtPtr[0] = 1;
 	txtPtr++;
 
-	StringCopy(txtPtr, gTypesInfo[gMovesInfo[moveInfo->moves[gMoveSelectionCursor[battler]]].type].name);
+    type = gMovesInfo[moveInfo->moves[gMoveSelectionCursor[battler]]].type;
+
+    if (!(IS_MOVE_STATUS(moveInfo->moves[gMoveSelectionCursor[battler]])) &&
+        (type == gBattleMons[battler].type1 || type == gBattleMons[battler].type2))
+        name = sStabTypeNames[type];
+    else
+        name = gTypesInfo[type].name;
+
+	StringCopy(txtPtr, name);
 	BattlePutTextOnWindow(gDisplayedStringBattle, TypeEffectiveness(battler, targetId));
     MoveSelectionDisplaySplitIcon(battler);
 }
