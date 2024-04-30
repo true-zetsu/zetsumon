@@ -894,7 +894,6 @@ static void UseTMHM(u8 taskId)
     SetUpItemUseCallback(taskId);
 }
 
-
 static void CB2_OpenTMCaseOnField(void)
 {
     InitTMCase(0, CB2_BagMenuFromStartMenu, 0);

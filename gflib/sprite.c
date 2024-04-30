@@ -1570,7 +1570,6 @@ u8 LoadSpritePaletteDouble(const struct SpritePalette *palette)
     }
 }
 
-
 void LoadSpritePalettes(const struct SpritePalette *palettes)
 {
     u32 i;
