@@ -129,8 +129,10 @@ enum
 #define TILE_FILLED_APPEAL_HEART 0x109D //0x103A
 #define TILE_FILLED_JAM_HEART    0x109F //0x103C
 #define TILE_EMPTY_JAM_HEART     0x109E //0x103D
-#define TILE_EXP_BAR_NO_TICK     0x1088
-#define TILE_EXP_BAR_FULL_TICK   0x1091
+#define TILE_EXP_BAR_NO_TICK     0x1088 //0x2062
+#define TILE_EXP_BAR_FULL_TICK   0x1091 //0x206A
+#define TILE_POKERUS_CURED       0x2C   //0x2C
+#define TILE_POKERUS_EMPTY       0x1081 //0x81A
 
 static EWRAM_DATA struct PokemonSummaryScreenData
 {
@@ -572,7 +574,7 @@ static const struct WindowTemplate sSummaryTemplate[] =
         .tilemapLeft = 1,
         .tilemapTop = 14,
         .width = 9,
-        .height = 4,
+        .height = 2,
         .paletteNum = 6,
         .baseBlock = 415,
     },
@@ -2723,13 +2725,13 @@ static void DrawPokerusCuredSymbol(struct Pokemon *mon) // This checks if the mo
 {
     if (!CheckPartyPokerus(mon, 0) && CheckPartyHasHadPokerus(mon, 0)) // If yes it draws the cured symbol
     {
-        sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][0][0x223] = 0x2C;
-        sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][1][0x223] = 0x2C;
+        sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][0][0x223] = TILE_POKERUS_CURED;
+        sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][1][0x223] = TILE_POKERUS_CURED;
     }
     else
     {
-        sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][0][0x223] = 0x81A;
-        sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][1][0x223] = 0x81A;
+        sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][0][0x223] = TILE_POKERUS_EMPTY;
+        sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][1][0x223] = TILE_POKERUS_EMPTY;
     }
     ScheduleBgCopyTilemapToVram(3);
 }
@@ -2904,7 +2906,6 @@ static void PrintNotEggInfo(void)
     StringCopy(gStringVar1, gText_LevelSymbol);
     ConvertIntToDecimalStringN(gStringVar2, summary->level, STR_CONV_MODE_LEFT_ALIGN, 3);
     StringAppend(gStringVar1, gStringVar2);
-
     PrintTextOnWindow(PSS_LABEL_WINDOW_PORTRAIT_SPECIES, gStringVar1, 24, 17, 0, 1);
     GetMonNickname(mon, gStringVar1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_PORTRAIT_NICKNAME, gStringVar1, 0, 1, 0, 1);
@@ -2987,7 +2988,7 @@ static void PrintPageNamesAndStats(void)
     */
 
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL, gText_RentalPkmn, 0, 1, 0, 1);
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_TYPE, gText_TypeSlash, 0, 4, 0, 1);
+    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_TYPE, gText_TypeSlash, 0, 0, 0, 1);
     statsXPos = 6 + GetStringCenterAlignXOffset(FONT_NORMAL, gText_HP4, 42);
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT, gText_HP4, statsXPos, 1, 0, 1);
     statsXPos = 6 + GetStringCenterAlignXOffset(FONT_NORMAL, gText_Attack3, 42);
@@ -4053,10 +4054,10 @@ static void SetMonTypeIcons(void)
     }
     else
     {
-        SetTypeSpritePosAndPal(gSpeciesInfo[summary->species].types[0], 164, 61, SPRITE_ARR_ID_TYPE);
+        SetTypeSpritePosAndPal(gSpeciesInfo[summary->species].types[0], 164, 57, SPRITE_ARR_ID_TYPE);
         if (gSpeciesInfo[summary->species].types[0] != gSpeciesInfo[summary->species].types[1])
         {
-            SetTypeSpritePosAndPal(gSpeciesInfo[summary->species].types[1], 199, 61, SPRITE_ARR_ID_TYPE + 1);
+            SetTypeSpritePosAndPal(gSpeciesInfo[summary->species].types[1], 199, 57, SPRITE_ARR_ID_TYPE + 1);
             SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 1, FALSE);
         }
         else
@@ -4065,7 +4066,7 @@ static void SetMonTypeIcons(void)
         }
         if (P_SHOW_TERA_TYPE >= GEN_9)
         {
-            SetTypeSpritePosAndPal(summary->teraType, 164, 61, SPRITE_ARR_ID_TYPE + 2);
+            SetTypeSpritePosAndPal(summary->teraType, 164, 57, SPRITE_ARR_ID_TYPE + 2);
         }
     }
 }
