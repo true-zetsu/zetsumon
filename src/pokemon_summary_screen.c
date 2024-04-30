@@ -109,6 +109,7 @@ enum {
 #define PSS_DATA_WINDOW_MOVE_NAMES 0
 #define PSS_DATA_WINDOW_MOVE_PP 1
 #define PSS_DATA_WINDOW_MOVE_DESCRIPTION 2
+#define PSS_DATA_WINDOW_MOVE_DESCRIPTION_TITLE 3
 
 #define MOVE_SELECTOR_SPRITES_COUNT 10
 #define TYPE_ICON_SPRITE_COUNT (MAX_MON_MOVES + 1)
@@ -124,10 +125,12 @@ enum
     SPRITE_ARR_ID_COUNT = SPRITE_ARR_ID_MOVE_SELECTOR2 + MOVE_SELECTOR_SPRITES_COUNT
 };
 
-#define TILE_EMPTY_APPEAL_HEART  0x1039
-#define TILE_FILLED_APPEAL_HEART 0x103A
-#define TILE_FILLED_JAM_HEART    0x103C
-#define TILE_EMPTY_JAM_HEART     0x103D
+#define TILE_EMPTY_APPEAL_HEART  0x109C //0x1039
+#define TILE_FILLED_APPEAL_HEART 0x109D //0x103A
+#define TILE_FILLED_JAM_HEART    0x109F //0x103C
+#define TILE_EMPTY_JAM_HEART     0x109E //0x103D
+#define TILE_EXP_BAR_NO_TICK     0x1088
+#define TILE_EXP_BAR_FULL_TICK   0x1091
 
 static EWRAM_DATA struct PokemonSummaryScreenData
 {
@@ -521,8 +524,8 @@ static const struct WindowTemplate sSummaryTemplate[] =
     },
     [PSS_LABEL_WINDOW_MOVES_POWER_ACC] = {
         .bg = 0,
-        .tilemapLeft = 1,
-        .tilemapTop = 15,
+        .tilemapLeft = 0,
+        .tilemapTop = 16,
         .width = 9,
         .height = 4,
         .paletteNum = 6,
@@ -676,7 +679,7 @@ static const struct WindowTemplate sPageMovesTemplate[] = // This is used for bo
     [PSS_DATA_WINDOW_MOVE_NAMES] = {
         .bg = 0,
         .tilemapLeft = 15,
-        .tilemapTop = 4,
+        .tilemapTop = 3,
         .width = 9,
         .height = 10,
         .paletteNum = 6,
@@ -685,7 +688,7 @@ static const struct WindowTemplate sPageMovesTemplate[] = // This is used for bo
     [PSS_DATA_WINDOW_MOVE_PP] = {
         .bg = 0,
         .tilemapLeft = 24,
-        .tilemapTop = 4,
+        .tilemapTop = 3,
         .width = 6,
         .height = 10,
         .paletteNum = 8,
@@ -693,12 +696,21 @@ static const struct WindowTemplate sPageMovesTemplate[] = // This is used for bo
     },
     [PSS_DATA_WINDOW_MOVE_DESCRIPTION] = {
         .bg = 0,
-        .tilemapLeft = 10,
+        .tilemapLeft = 11,
         .tilemapTop = 15,
         .width = 20,
         .height = 4,
         .paletteNum = 6,
         .baseBlock = 601,
+    },
+    [PSS_DATA_WINDOW_MOVE_DESCRIPTION_TITLE] = {
+        .bg = 0,
+        .tilemapLeft = 11,
+        .tilemapTop = 13,
+        .width = 10,
+        .height = 2,
+        .paletteNum = 6,
+        .baseBlock = 671,
     },
 };
 static const u8 sTextColors[][3] =
@@ -1149,7 +1161,7 @@ static const u16 sMarkings_Pal[] = INCBIN_U16("graphics/summary_screen/markings.
 static u8 ShowCategoryIcon(u32 category)
 {
     if (sMonSummaryScreen->categoryIconSpriteId == 0xFF)
-        sMonSummaryScreen->categoryIconSpriteId = CreateSprite(&sSpriteTemplate_CategoryIcons, 48, 129, 0);
+        sMonSummaryScreen->categoryIconSpriteId = CreateSprite(&sSpriteTemplate_CategoryIcons, 41, 135, 0);
 
     gSprites[sMonSummaryScreen->categoryIconSpriteId].invisible = FALSE;
     StartSpriteAnim(&gSprites[sMonSummaryScreen->categoryIconSpriteId], category);
@@ -2759,9 +2771,9 @@ static void DrawExperienceProgressBar(struct Pokemon *unused)
     for (i = 0; i < 8; i++)
     {
         if (numExpProgressBarTicks > 7)
-            dst[i] = 0x206A;
+            dst[i] = TILE_EXP_BAR_FULL_TICK; //0x206A;
         else
-            dst[i] = 0x2062 + (numExpProgressBarTicks % 8);
+            dst[i] = TILE_EXP_BAR_NO_TICK + (numExpProgressBarTicks % 8); //0x2062 + (numExpProgressBarTicks % 8);
         numExpProgressBarTicks -= 8;
         if (numExpProgressBarTicks < 0)
             numExpProgressBarTicks = 0;
@@ -2991,8 +3003,8 @@ static void PrintPageNamesAndStats(void)
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_SKILLS_EXP, gText_ExpPoints, 6, 1, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_SKILLS_EXP, gText_NextLv, 6, 17, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATUS, gText_Status, 2, 1, 0, 1);
-    PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, gText_Power, 0, 1, 0, 1);
-    PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, gText_Accuracy2, 0, 17, 0, 1);
+    PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, gText_Power, 2, 0, 0, 1);
+    PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, gText_Accuracy2, 2, 17, 0, 0);
     PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_APPEAL_JAM, gText_Appeal, 0, 1, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_APPEAL_JAM, gText_Jam, 0, 17, 0, 1);
 }
@@ -3154,8 +3166,8 @@ static void PrintInfoPageText(void)
     {
         PrintMonOTName();
         PrintMonOTID();
-        //PrintMonAbilityName();
-        //PrintMonAbilityDescription();
+        PrintMonAbilityName();
+        PrintMonAbilityDescription();
         BufferMonTrainerMemo();
         PrintMonTrainerMemo();
     }
@@ -3743,7 +3755,7 @@ static void PrintMoveNameAndPP(u8 moveIndex)
     if (move != 0)
     {
         pp = CalculatePPWithBonus(move, summary->ppBonuses, moveIndex);
-        PrintTextOnWindow(moveNameWindowId, GetMoveName(move), 0, moveIndex * 16 + 1, 0, 1);
+        PrintTextOnWindow(moveNameWindowId, GetMoveName(move), 4, moveIndex * 16 + 1, 0, 1);
         ConvertIntToDecimalStringN(gStringVar1, summary->pp[moveIndex], STR_CONV_MODE_RIGHT_ALIGN, 2);
         ConvertIntToDecimalStringN(gStringVar2, pp, STR_CONV_MODE_RIGHT_ALIGN, 2);
         DynamicPlaceholderTextUtil_Reset();
@@ -3782,7 +3794,7 @@ static void PrintMovePowerAndAccuracy(u16 moveIndex)
             text = gStringVar1;
         }
 
-        PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, text, 53, 1, 0, 0);
+        PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, text, 53, 0, 0, 1);
 
         if (gMovesInfo[moveIndex].accuracy == 0)
         {
@@ -3879,9 +3891,9 @@ static void PrintMoveDetails(u16 move)
             PrintMovePowerAndAccuracy(move);
 
             if (moveEffect != EFFECT_PLACEHOLDER)
-                PrintTextOnWindow(windowId, gMovesInfo[move].description, 6, 1, 0, 0);
+                PrintTextOnWindowWithFont(windowId, gMovesInfo[move].description, 4, 1, 0, 0, FONT_SMALL);
             else
-                PrintTextOnWindow(windowId, gNotDoneYetDescription, 6, 1, 0, 0);
+                PrintTextOnWindowWithFont(windowId, gNotDoneYetDescription, 4, 1, 0, 0, FONT_SMALL);
         }
         else
         {
@@ -3904,7 +3916,7 @@ static void PrintNewMoveDetailsOrCancelText(void)
 
     if (sMonSummaryScreen->newMove == MOVE_NONE)
     {
-        PrintTextOnWindow(windowId1, gText_Cancel, 0, 65, 0, 1);
+        PrintTextOnWindowWithFont(windowId1, gText_Cancel, 0, 65, 0, 1, FONT_SMALL);
     }
     else
     {
@@ -4080,9 +4092,9 @@ static void SetMoveTypeIcons(void)
                 if (type >= TYPE_MYSTERY)
                     type++;
                 type |= 0xC0;
-                SetTypeSpritePosAndPal(type & 0x3F, 85, 32 + (i * 16), i + SPRITE_ARR_ID_TYPE);
+                SetTypeSpritePosAndPal(type & 0x3F, 90, 24 + (i * 16), i + SPRITE_ARR_ID_TYPE);
             } else {
-                SetTypeSpritePosAndPal(gMovesInfo[summary->moves[i]].type, 85, 32 + (i * 16), i + SPRITE_ARR_ID_TYPE);
+                SetTypeSpritePosAndPal(gMovesInfo[summary->moves[i]].type, 90, 24 + (i * 16), i + SPRITE_ARR_ID_TYPE);
             }
         }
         else
@@ -4097,7 +4109,7 @@ static void SetContestMoveTypeIcons(void)
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
         if (summary->moves[i] != MOVE_NONE)
-            SetTypeSpritePosAndPal(NUMBER_OF_MON_TYPES + gMovesInfo[summary->moves[i]].contestCategory, 85, 32 + (i * 16), i + SPRITE_ARR_ID_TYPE);
+            SetTypeSpritePosAndPal(NUMBER_OF_MON_TYPES + gMovesInfo[summary->moves[i]].contestCategory, 90, 24 + (i * 16), i + SPRITE_ARR_ID_TYPE);
         else
             SetSpriteInvisibility(i + SPRITE_ARR_ID_TYPE, TRUE);
     }
@@ -4347,7 +4359,7 @@ static void CreateMoveSelectorSprites(u8 idArrayStart)
 
         for (i = 0; i < MOVE_SELECTOR_SPRITES_COUNT; i++)
         {
-            spriteIds[i] = CreateSprite(&sMoveSelectorSpriteTemplate, i * 16 + 89, 40, subpriority);
+            spriteIds[i] = CreateSprite(&sMoveSelectorSpriteTemplate, i * 16 + 89, 32, subpriority);
             if (i == 0)
                 StartSpriteAnim(&gSprites[spriteIds[i]], 4); // left
             else if (i == 9)
