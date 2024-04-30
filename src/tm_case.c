@@ -527,7 +527,6 @@ static void GetTMNumberAndMoveString(u8 * dest, u16 itemId)
     }
     else
     {
-        StringAppend(gStringVar4, sText_ClearTo18);
         StringAppend(gStringVar4, gText_NumberClear01);
         ConvertIntToDecimalStringN(gStringVar1, itemId - ITEM_TM01 + 1, STR_CONV_MODE_LEADING_ZEROS, 2);
         StringAppend(gStringVar4, gStringVar1);
@@ -566,7 +565,7 @@ static void TMCase_ItemPrintFunc(u8 windowId, u32 itemId, u8 y)
             // StringExpandPlaceholders(gStringVar4, gText_xVar1);
             // AddTextPrinterParameterized_ColorByIndex(windowId, 0, gStringVar4, 0x7E, y, 0, 0, 0xFF, 1);
         }
-        else
+        if (itemId >= ITEM_HM01)
         {
             PlaceHMTileInWindow(windowId, 8, y);
         }
