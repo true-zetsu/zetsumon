@@ -89,8 +89,7 @@ enum {
 #define PSS_LABEL_WINDOW_PORTRAIT_DEX_NUMBER 17
 #define PSS_LABEL_WINDOW_PORTRAIT_NICKNAME 18 // The upper name
 #define PSS_LABEL_WINDOW_PORTRAIT_SPECIES 19 // The lower name
-#define PSS_LABEL_WINDOW_PORTRAIT_LEVEL 20
-#define PSS_LABEL_WINDOW_END 21
+#define PSS_LABEL_WINDOW_END 20
 
 // Dynamic fields for the Pokémon Info page
 #define PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER 0
@@ -109,7 +108,6 @@ enum {
 #define PSS_DATA_WINDOW_MOVE_NAMES 0
 #define PSS_DATA_WINDOW_MOVE_PP 1
 #define PSS_DATA_WINDOW_MOVE_DESCRIPTION 2
-#define PSS_DATA_WINDOW_MOVE_DESCRIPTION_TITLE 3
 
 #define MOVE_SELECTOR_SPRITES_COUNT 10
 #define TYPE_ICON_SPRITE_COUNT (MAX_MON_MOVES + 1)
@@ -574,18 +572,9 @@ static const struct WindowTemplate sSummaryTemplate[] =
         .tilemapLeft = 1,
         .tilemapTop = 14,
         .width = 9,
-        .height = 2,
+        .height = 4,
         .paletteNum = 6,
         .baseBlock = 415,
-    },
-    [PSS_LABEL_WINDOW_PORTRAIT_LEVEL] = {
-        .bg = 0,
-        .tilemapLeft = 1,
-        .tilemapTop = 4,
-        .width = 9,
-        .height = 2,
-        .paletteNum = 6,
-        .baseBlock = 397,
     },
     [PSS_LABEL_WINDOW_END] = DUMMY_WIN_TEMPLATE
 };
