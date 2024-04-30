@@ -124,7 +124,7 @@ static void InitSelectedTMSpriteData(u8 a0, u16 itemId);
 static void SpriteCB_MoveTMSpriteInCase(struct Sprite * sprite);
 static void LoadTMTypePalettes(void);
 static void DrawPartyMonIcons(void);
-static void TintPartyMonIcons(u8 tm);
+static void TintPartyMonIcons(u16 tm);
 static void DestroyPartyMonIcons(void);
 
 static const struct BgTemplate sBGTemplates[] = {
@@ -588,7 +588,7 @@ static void TMCase_MoveCursor_UpdatePrintedDescription(s32 itemIndex)
     AddTextPrinterParameterized_ColorByIndex(1, 2, str, 2, 3, 1, 0, 0, 0);
 
     // update icons
-    TintPartyMonIcons(itemId - ITEM_TM01);
+    TintPartyMonIcons(ItemIdToBattleMoveId(itemId));
 }
 
 static void FillBG2RowWithPalette_2timesNplus1(s32 a0)
@@ -1162,7 +1162,7 @@ static void DrawPartyMonIcons(void)
     }
 }
 
-static void TintPartyMonIcons(u8 tm)
+static void TintPartyMonIcons(u16 tm)
 {
     u8 i;
     u16 species;
