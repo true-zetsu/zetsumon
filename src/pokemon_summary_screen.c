@@ -694,15 +694,6 @@ static const struct WindowTemplate sPageMovesTemplate[] = // This is used for bo
         .paletteNum = 6,
         .baseBlock = 601,
     },
-    [PSS_DATA_WINDOW_MOVE_DESCRIPTION_TITLE] = {
-        .bg = 0,
-        .tilemapLeft = 11,
-        .tilemapTop = 13,
-        .width = 10,
-        .height = 2,
-        .paletteNum = 6,
-        .baseBlock = 671,
-    },
 };
 static const u8 sTextColors[][3] =
 {
