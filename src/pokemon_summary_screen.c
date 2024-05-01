@@ -3129,6 +3129,9 @@ static void HandleEggTilemaps(void)
         ClearWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER);
         ClearWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_ID);
         ClearWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_MEMO);
+        RemoveWindow(PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER);
+        RemoveWindow(PSS_DATA_WINDOW_EGG_INFO_ID);
+        RemoveWindow(PSS_DATA_WINDOW_EGG_INFO_MEMO);
 
         PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_TYPE);
         PutWindowTilemap(PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER);
@@ -3141,6 +3144,9 @@ static void HandleEggTilemaps(void)
         ClearWindowTilemap(PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER);
         ClearWindowTilemap(PSS_DATA_WINDOW_INFO_ID);
         ClearWindowTilemap(PSS_DATA_WINDOW_INFO_MEMO);
+        RemoveWindow(PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER);
+        RemoveWindow(PSS_DATA_WINDOW_INFO_ID);
+        RemoveWindow(PSS_DATA_WINDOW_INFO_MEMO);
 
         PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE);
         PutWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER);
@@ -3504,7 +3510,7 @@ static void PrintEggMemo(void)
         text = gText_OddEggFoundByCouple;
     }
 
-    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_MEMO), text, 8, 8, 0, 0);
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_EGG_INFO_MEMO), text, 0, 8, 0, 0);
 }
 
 static void PrintMemoPageText(void)
