@@ -4586,7 +4586,6 @@ static u8 *GetCharacteristic(void)
 
     highestIV = 0;
     highestCount = 0;
-    highestIndex = -1;
 
     for (i = 0; i < NUM_STATS; i++)
     {
