@@ -2030,7 +2030,7 @@ static void PssScrollLeftEnd(u8 taskId) // display left
 
 static void TryDrawExperienceProgressBar(void)
 {
-    if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
+    if (sMonSummaryScreen->currPageIndex == PSS_PAGE_INFO)
         DrawExperienceProgressBar(&sMonSummaryScreen->currentMon);
 }
 
@@ -2810,7 +2810,7 @@ static void DrawExperienceProgressBar(struct Pokemon *unused)
         numExpProgressBarTicks = 0;
     }
 
-    dst = &sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_SKILLS][1][0x255];
+    dst = &sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][0][0x235]; // 0x255
     for (i = 0; i < 8; i++)
     {
         if (numExpProgressBarTicks > 7)
@@ -2822,7 +2822,7 @@ static void DrawExperienceProgressBar(struct Pokemon *unused)
             numExpProgressBarTicks = 0;
     }
 
-    if (GetBgTilemapBuffer(1) == sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_SKILLS][0])
+    if (GetBgTilemapBuffer(1) == sMonSummaryScreen->bgTilemapBuffers[PSS_PAGE_INFO][0])
         ScheduleBgCopyTilemapToVram(1);
     else
         ScheduleBgCopyTilemapToVram(2);
@@ -2956,6 +2956,7 @@ static void PrintNotEggInfo(void)
     PrintGenderSymbol(mon, summary->species2);
     PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_NICKNAME);
     PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_SPECIES);
+    TryDrawExperienceProgressBar();
 }
 
 static void PrintEggInfo(void)
