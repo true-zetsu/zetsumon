@@ -266,7 +266,6 @@ static void PrintEggInfo(void);
 static void PrintGenderSymbol(struct Pokemon *, u16);
 static void PrintPageNamesAndStats(void);
 static void PutPageWindowTilemaps(u8);
-static void HandleEggTilemaps(void);
 static void ClearPageWindowTilemaps(u8);
 static void RemoveWindowByIndex(u8);
 static void PrintPageSpecificText(u8);
@@ -1825,7 +1824,6 @@ static void Task_ChangeSummaryMon(u8 taskId)
         data[1] = 0;
         break;
     case 9:
-        HandleEggTilemaps();
         SetTypeIcons();
         break;
     case 10:
@@ -3075,6 +3073,7 @@ static void PutPageWindowTilemaps(u8 page)
         //PutWindowTilemap(PSS_LABEL_WINDOW_PROMPT_CANCEL);
         if (InBattleFactory() == TRUE || InSlateportBattleTent() == TRUE)
             PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL);
+        PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_TYPE);
         break;
     case PSS_PAGE_MEMO:
         PutWindowTilemap(PSS_LABEL_WINDOW_TRAINER_MEMO_TITLE);
@@ -3117,44 +3116,6 @@ static void PutPageWindowTilemaps(u8 page)
     ScheduleBgCopyTilemapToVram(0);
 }
 
-static void HandleEggTilemaps(void)
-{
-    return;
-
-    // need to finish this function/figure out a better way to handle these
-
-    if (!sMonSummaryScreen->summary.isEgg)
-    {
-        ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE);
-        ClearWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER);
-        ClearWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_ID);
-        ClearWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_MEMO);
-        RemoveWindow(PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER);
-        RemoveWindow(PSS_DATA_WINDOW_EGG_INFO_ID);
-        RemoveWindow(PSS_DATA_WINDOW_EGG_INFO_MEMO);
-
-        PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_TYPE);
-        PutWindowTilemap(PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER);
-        PutWindowTilemap(PSS_DATA_WINDOW_INFO_ID);
-        PutWindowTilemap(PSS_DATA_WINDOW_INFO_MEMO);
-    }
-    else
-    {
-        ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_TYPE);
-        ClearWindowTilemap(PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER);
-        ClearWindowTilemap(PSS_DATA_WINDOW_INFO_ID);
-        ClearWindowTilemap(PSS_DATA_WINDOW_INFO_MEMO);
-        RemoveWindow(PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER);
-        RemoveWindow(PSS_DATA_WINDOW_INFO_ID);
-        RemoveWindow(PSS_DATA_WINDOW_INFO_MEMO);
-
-        PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE);
-        PutWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER);
-        PutWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_ID);
-        PutWindowTilemap(PSS_DATA_WINDOW_EGG_INFO_MEMO);
-    }
-}
-
 static void ClearPageWindowTilemaps(u8 page)
 {
     u8 i;
@@ -3165,6 +3126,7 @@ static void ClearPageWindowTilemaps(u8 page)
         //ClearWindowTilemap(PSS_LABEL_WINDOW_PROMPT_CANCEL);
         if (InBattleFactory() == TRUE || InSlateportBattleTent() == TRUE)
             ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL);
+        ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_TYPE);
         break;
     case PSS_PAGE_MEMO:
         break;
