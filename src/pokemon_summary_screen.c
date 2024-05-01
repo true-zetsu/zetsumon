@@ -333,6 +333,7 @@ static void SetMainMoveSelectorColor(u8);
 static void KeepMoveSelectorVisible(u8);
 static void SummaryScreen_DestroyAnimDelayTask(void);
 static void BufferIvOrEvStats(u8 mode);
+static void GetCharacteristic(void);
 
 static const struct BgTemplate sBgTemplates[] =
 {
@@ -2918,6 +2919,9 @@ static void PrintNotEggInfo(void)
     struct PokeSummary *summary = &sMonSummaryScreen->summary;
     u16 dexNum = SpeciesToPokedexNum(summary->species);
 
+    // debugging this before trying to put it on screen
+    GetCharacteristic();
+
     if (dexNum != 0xFFFF)
     {
         u8 digitCount = (NATIONAL_DEX_COUNT > 999 && IsNationalPokedexEnabled()) ? 4 : 3;
@@ -4513,4 +4517,127 @@ static void KeepMoveSelectorVisible(u8 firstSpriteId)
         gSprites[spriteIds[i]].data[1] = 0;
         gSprites[spriteIds[i]].invisible = FALSE;
     }
+}
+
+static const u8 *const sCharacteristics[][MAX_IV_MASK + 1] = 
+{
+    [STAT_HP] =
+    {
+        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
+        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
+        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
+        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
+        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
+        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
+        gText_CharacteristicHP1, gText_CharacteristicHP2,
+    },
+    [STAT_ATK] =
+    {
+        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
+        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
+        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
+        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
+        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
+        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
+        gText_CharacteristicAtk1, gText_CharacteristicAtk2,
+    },
+    [STAT_DEF] =
+    {
+        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
+        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
+        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
+        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
+        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
+        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
+        gText_CharacteristicDef1, gText_CharacteristicDef2,
+    },
+    [STAT_SPEED] =
+    {
+        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
+        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
+        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
+        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
+        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
+        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
+        gText_CharacteristicSpe1, gText_CharacteristicSpe2,
+    },
+    [STAT_SPATK] =
+    {
+        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
+        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
+        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
+        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
+        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
+        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
+        gText_CharacteristicSpA1, gText_CharacteristicSpA2,
+    },
+    [STAT_SPDEF] =
+    {
+        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
+        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
+        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
+        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
+        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
+        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
+        gText_CharacteristicSpD1, gText_CharacteristicSpD2,
+    },
+};
+
+static void GetCharacteristic(void)
+{
+    u16 monIVs[NUM_STATS];
+    u8 highestIV, highestCount, highestIndex, tiebreaker;
+    u8 i, j;
+    bool8 highestIVs[NUM_STATS] = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE };
+
+    monIVs[STAT_HP] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP_IV);
+    monIVs[STAT_ATK] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_ATK_IV);
+    monIVs[STAT_DEF] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_DEF_IV);
+    monIVs[STAT_SPEED] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPEED_IV);
+    monIVs[STAT_SPATK] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPATK_IV);
+    monIVs[STAT_SPDEF] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPDEF_IV);
+
+    highestIV = 0;
+    highestCount = 0;
+    highestIndex = -1;
+
+    for (i = 0; i < NUM_STATS; i++)
+    {
+        if (monIVs[i] > highestIV) 
+        {
+            for (j = 0; j < i; j++) 
+                highestIVs[j] = FALSE;
+            
+            highestIVs[i] = TRUE;
+            highestIV = monIVs[i];
+        }
+
+        if (monIVs[i] == highestIV)
+            highestIVs[i] = TRUE;
+    }
+
+    for (i = 0; i < NUM_STATS; i++) 
+        if (highestIVs[i])
+        {
+            highestIndex = i;
+            highestCount++;
+        }
+            
+
+    if (highestCount > 1)
+    {
+        tiebreaker = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PERSONALITY) % NUM_STATS;
+        highestIndex = NUM_STATS;
+        do
+        {
+            if (highestIVs[tiebreaker])
+                highestIndex = tiebreaker;
+            else
+                tiebreaker = (tiebreaker + 1 > NUM_STATS - 1) ? 0 : tiebreaker + 1;
+        } while (highestIndex == NUM_STATS);
+    }
+
+    DebugPrintf("highestIndex: %d", highestIndex);
+    DebugPrintf("highestIV: %d", highestIV);
+    DebugPrintf("characteristic: %S", sCharacteristics[highestIndex][highestIV]);
 }

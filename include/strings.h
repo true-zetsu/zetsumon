@@ -3095,4 +3095,35 @@ extern const u8 gText_MoveItemWhere[];
 extern const u8 gText_XsYAnd[];
 extern const u8 gText_XsYWereSwapped[];
 
+extern const u8 gText_CharacteristicHP1[];
+extern const u8 gText_CharacteristicHP2[];
+extern const u8 gText_CharacteristicHP3[];
+extern const u8 gText_CharacteristicHP4[];
+extern const u8 gText_CharacteristicHP5[];
+extern const u8 gText_CharacteristicAtk1[];
+extern const u8 gText_CharacteristicAtk2[];
+extern const u8 gText_CharacteristicAtk3[];
+extern const u8 gText_CharacteristicAtk4[];
+extern const u8 gText_CharacteristicAtk5[];
+extern const u8 gText_CharacteristicDef1[];
+extern const u8 gText_CharacteristicDef2[];
+extern const u8 gText_CharacteristicDef3[];
+extern const u8 gText_CharacteristicDef4[];
+extern const u8 gText_CharacteristicDef5[];
+extern const u8 gText_CharacteristicSpA1[];
+extern const u8 gText_CharacteristicSpA2[];
+extern const u8 gText_CharacteristicSpA3[];
+extern const u8 gText_CharacteristicSpA4[];
+extern const u8 gText_CharacteristicSpA5[];
+extern const u8 gText_CharacteristicSpD1[];
+extern const u8 gText_CharacteristicSpD2[];
+extern const u8 gText_CharacteristicSpD3[];
+extern const u8 gText_CharacteristicSpD4[];
+extern const u8 gText_CharacteristicSpD5[];
+extern const u8 gText_CharacteristicSpe1[];
+extern const u8 gText_CharacteristicSpe2[];
+extern const u8 gText_CharacteristicSpe3[];
+extern const u8 gText_CharacteristicSpe4[];
+extern const u8 gText_CharacteristicSpe5[];
+
 #endif // GUARD_STRINGS_H
