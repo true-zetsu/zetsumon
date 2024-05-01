@@ -288,6 +288,8 @@ static void PrintEggOTName(void);
 static void PrintEggOTID(void);
 static void PrintEggState(void);
 static void PrintEggMemo(void);
+static void PrintMemoPageText(void);
+static void Task_PrintMemoPage(u8);
 static void Task_PrintSkillsPage(u8);
 static void PrintHeldItemName(void);
 static void PrintSkillsPageText(void);
@@ -333,7 +335,7 @@ static void SetMainMoveSelectorColor(u8);
 static void KeepMoveSelectorVisible(u8);
 static void SummaryScreen_DestroyAnimDelayTask(void);
 static void BufferIvOrEvStats(u8 mode);
-static void GetCharacteristic(void);
+static u8 *GetCharacteristic(void);
 
 static const struct BgTemplate sBgTemplates[] =
 {
@@ -636,10 +638,10 @@ static const struct WindowTemplate sPageInfoTemplate[] =
     },
     [PSS_DATA_WINDOW_INFO_MEMO] = {
         .bg = 0,
-        .tilemapLeft = 11,
-        .tilemapTop = 14,
+        .tilemapLeft = 12,
+        .tilemapTop = 3,
         .width = 18,
-        .height = 6,
+        .height = 12,
         .paletteNum = 6,
         .baseBlock = 559,
     },
@@ -774,7 +776,7 @@ static const u8 sButtons_Gfx[][4 * TILE_SIZE_4BPP] = {
 static void (*const sTextPrinterFunctions[])(void) =
 {
     [PSS_PAGE_INFO] = PrintInfoPageText,
-    [PSS_PAGE_MEMO] = PrintInfoPageText,
+    [PSS_PAGE_MEMO] = PrintMemoPageText,
     [PSS_PAGE_SKILLS] = PrintSkillsPageText,
     [PSS_PAGE_BATTLE_MOVES] = PrintBattleMoves,
     [PSS_PAGE_CONTEST_MOVES] = PrintContestMoves
@@ -783,7 +785,7 @@ static void (*const sTextPrinterFunctions[])(void) =
 static void (*const sTextPrinterTasks[])(u8 taskId) =
 {
     [PSS_PAGE_INFO] = Task_PrintInfoPage,
-    [PSS_PAGE_MEMO] = Task_PrintInfoPage,
+    [PSS_PAGE_MEMO] = Task_PrintMemoPage,
     [PSS_PAGE_SKILLS] = Task_PrintSkillsPage,
     [PSS_PAGE_BATTLE_MOVES] = Task_PrintBattleMoves,
     [PSS_PAGE_CONTEST_MOVES] = Task_PrintContestMoves
@@ -2919,9 +2921,6 @@ static void PrintNotEggInfo(void)
     struct PokeSummary *summary = &sMonSummaryScreen->summary;
     u16 dexNum = SpeciesToPokedexNum(summary->species);
 
-    // debugging this before trying to put it on screen
-    GetCharacteristic();
-
     if (dexNum != 0xFFFF)
     {
         u8 digitCount = (NATIONAL_DEX_COUNT > 999 && IsNationalPokedexEnabled()) ? 4 : 3;
@@ -3254,8 +3253,6 @@ static void PrintInfoPageText(void)
         PrintMonOTID();
         PrintMonAbilityName();
         PrintMonAbilityDescription();
-        BufferMonTrainerMemo();
-        PrintMonTrainerMemo();
     }
 }
 
@@ -3278,12 +3275,6 @@ static void Task_PrintInfoPage(u8 taskId)
         PrintMonAbilityDescription();
         break;
     case 5:
-        BufferMonTrainerMemo();
-        break;
-    case 6:
-        PrintMonTrainerMemo();
-        break;
-    case 7:
         DestroyTask(taskId);
         return;
     }
@@ -3375,6 +3366,9 @@ static void BufferMonTrainerMemo(void)
         }
 
         DynamicPlaceholderTextUtil_ExpandPlaceholders(gStringVar4, text);
+        StringAppend(gStringVar4, gText_NewLine2);
+        StringAppend(gStringVar4, gText_NewLine2);
+        StringAppend(gStringVar4, GetCharacteristic());
         Free(metLevelString);
         Free(metLocationString);
     }
@@ -3511,6 +3505,31 @@ static void PrintEggMemo(void)
     }
 
     PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_MEMO), text, 8, 8, 0, 0);
+}
+
+static void PrintMemoPageText(void)
+{
+    BufferMonTrainerMemo();
+    PrintMonTrainerMemo();
+}
+
+static void Task_PrintMemoPage(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+
+    switch (data[0])
+    {
+    case 1:
+        BufferMonTrainerMemo();
+        break;
+    case 2:
+        PrintMonTrainerMemo();
+        break;
+    case 3:
+        DestroyTask(taskId);
+        return;
+    }
+    data[0]++;
 }
 
 static void PrintSkillsPageText(void)
@@ -4583,7 +4602,7 @@ static const u8 *const sCharacteristics[][MAX_IV_MASK + 1] =
     },
 };
 
-static void GetCharacteristic(void)
+static u8 *GetCharacteristic(void)
 {
     u16 monIVs[NUM_STATS];
     u8 highestIV, highestCount, highestIndex, tiebreaker;
@@ -4637,7 +4656,5 @@ static void GetCharacteristic(void)
         } while (highestIndex == NUM_STATS);
     }
 
-    DebugPrintf("highestIndex: %d", highestIndex);
-    DebugPrintf("highestIV: %d", highestIV);
-    DebugPrintf("characteristic: %S", sCharacteristics[highestIndex][highestIV]);
+    return (u8 *)sCharacteristics[highestIndex][highestIV];
 }
