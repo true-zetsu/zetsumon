@@ -4506,67 +4506,33 @@ static void KeepMoveSelectorVisible(u8 firstSpriteId)
     }
 }
 
-static const u8 *const sCharacteristics[][MAX_IV_MASK + 1] = 
+#define NUM_CHARACTERISTICS 5
+
+static const u8 *const sCharacteristics[][NUM_CHARACTERISTICS] = 
 {
     [STAT_HP] =
     {
         gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
-        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
-        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
-        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
-        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
-        gText_CharacteristicHP1, gText_CharacteristicHP2, gText_CharacteristicHP3, gText_CharacteristicHP4, gText_CharacteristicHP5,
-        gText_CharacteristicHP1, gText_CharacteristicHP2,
     },
     [STAT_ATK] =
     {
         gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
-        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
-        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
-        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
-        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
-        gText_CharacteristicAtk1, gText_CharacteristicAtk2, gText_CharacteristicAtk3, gText_CharacteristicAtk4, gText_CharacteristicAtk5,
-        gText_CharacteristicAtk1, gText_CharacteristicAtk2,
     },
     [STAT_DEF] =
     {
         gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
-        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
-        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
-        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
-        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
-        gText_CharacteristicDef1, gText_CharacteristicDef2, gText_CharacteristicDef3, gText_CharacteristicDef4, gText_CharacteristicDef5,
-        gText_CharacteristicDef1, gText_CharacteristicDef2,
     },
     [STAT_SPEED] =
     {
         gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
-        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
-        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
-        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
-        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
-        gText_CharacteristicSpe1, gText_CharacteristicSpe2, gText_CharacteristicSpe3, gText_CharacteristicSpe4, gText_CharacteristicSpe5,
-        gText_CharacteristicSpe1, gText_CharacteristicSpe2,
     },
     [STAT_SPATK] =
     {
         gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
-        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
-        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
-        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
-        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
-        gText_CharacteristicSpA1, gText_CharacteristicSpA2, gText_CharacteristicSpA3, gText_CharacteristicSpA4, gText_CharacteristicSpA5,
-        gText_CharacteristicSpA1, gText_CharacteristicSpA2,
     },
     [STAT_SPDEF] =
     {
         gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
-        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
-        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
-        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
-        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
-        gText_CharacteristicSpD1, gText_CharacteristicSpD2, gText_CharacteristicSpD3, gText_CharacteristicSpD4, gText_CharacteristicSpD5,
-        gText_CharacteristicSpD1, gText_CharacteristicSpD2,
     },
 };
 
@@ -4586,6 +4552,7 @@ static u8 *GetCharacteristic(void)
 
     highestIV = 0;
     highestCount = 0;
+    highestIndex = NUM_STATS;
 
     for (i = 0; i < NUM_STATS; i++)
     {
@@ -4608,7 +4575,6 @@ static u8 *GetCharacteristic(void)
             highestIndex = i;
             highestCount++;
         }
-            
 
     if (highestCount > 1)
     {
@@ -4623,5 +4589,5 @@ static u8 *GetCharacteristic(void)
         } while (highestIndex == NUM_STATS);
     }
 
-    return (u8 *)sCharacteristics[highestIndex][highestIV];
+    return (u8 *)sCharacteristics[highestIndex][highestIV % NUM_CHARACTERISTICS];
 }
