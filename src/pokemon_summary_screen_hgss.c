@@ -3846,7 +3846,7 @@ static void PrintMoveNameAndPP(u8 moveIndex)
     if (move != 0)
     {
         pp = CalculatePPWithBonus(move, summary->ppBonuses, moveIndex);
-        PrintTextOnWindow(moveNameWindowId, GetMoveName(move), 4, moveIndex * 16 + 1, 0, 1);
+        PrintTextOnWindow(moveNameWindowId, GetMoveName(move), 4, moveIndex * 16 + 1, 0, 0);
         ConvertIntToDecimalStringN(gStringVar1, summary->pp[moveIndex], STR_CONV_MODE_RIGHT_ALIGN, 2);
         ConvertIntToDecimalStringN(gStringVar2, pp, STR_CONV_MODE_RIGHT_ALIGN, 2);
         DynamicPlaceholderTextUtil_Reset();
@@ -4166,10 +4166,11 @@ static void SetMoveTypeIcons(void)
     u8 i;
     struct PokeSummary *summary = &sMonSummaryScreen->summary;
     struct Pokemon *mon = &sMonSummaryScreen->currentMon;
-    //u16 species = GetMonData(mon, MON_DATA_SPECIES);
 
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
+        u8 yOffset = (i == (MAX_MON_MOVES - 1)) ? 25 : 24;
+
         if (summary->moves[i] != MOVE_NONE) {
             if (summary->moves[i] == MOVE_HIDDEN_POWER) {
                 u8 typeBits  = ((GetMonData(mon, MON_DATA_HP_IV) & 1) << 0)
@@ -4183,9 +4184,9 @@ static void SetMoveTypeIcons(void)
                 if (type >= TYPE_MYSTERY)
                     type++;
                 type |= 0xC0;
-                SetTypeSpritePosAndPalHGSS(type & 0x3F, 90, 24 + (i * 16), i + SPRITE_ARR_ID_TYPE);
+                SetTypeSpritePosAndPalHGSS(type & 0x3F, 90, yOffset + (i * 16), i + SPRITE_ARR_ID_TYPE);
             } else {
-                SetTypeSpritePosAndPalHGSS(gMovesInfo[summary->moves[i]].type, 90, 24 + (i * 16), i + SPRITE_ARR_ID_TYPE);
+                SetTypeSpritePosAndPalHGSS(gMovesInfo[summary->moves[i]].type, 90, yOffset + (i * 16), i + SPRITE_ARR_ID_TYPE);
             }
         }
         else
