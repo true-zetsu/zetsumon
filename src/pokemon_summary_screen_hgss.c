@@ -93,8 +93,9 @@ enum {
 #define PSS_LABEL_WINDOW_PORTRAIT_DEX_NUMBER 19
 #define PSS_LABEL_WINDOW_PORTRAIT_NICKNAME 20 // The upper name
 #define PSS_LABEL_WINDOW_PORTRAIT_SPECIES 21 // The lower name
-#define PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM 22
-#define PSS_LABEL_WINDOW_END 23
+#define PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM_LABEL 22
+#define PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM 23
+#define PSS_LABEL_WINDOW_END 24
 
 // Dynamic fields for the Pokémon Info page
 #define PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER 0
@@ -611,6 +612,15 @@ static const struct WindowTemplate sSummaryTemplate[] =
         .paletteNum = 6,
         .baseBlock = 415,
     },
+    [PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM_LABEL] = {
+        .bg = 0,
+        .tilemapLeft = 0,
+        .tilemapTop = 16,
+        .width = 10,
+        .height = 2,
+        .paletteNum = 6,
+        .baseBlock = 451,
+    },
     [PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM] = {
         .bg = 0,
         .tilemapLeft = 0,
@@ -618,7 +628,7 @@ static const struct WindowTemplate sSummaryTemplate[] =
         .width = 10,
         .height = 2,
         .paletteNum = 6,
-        .baseBlock = 451,
+        .baseBlock = 471,
     },
     [PSS_LABEL_WINDOW_END] = DUMMY_WIN_TEMPLATE
 };
@@ -631,7 +641,7 @@ static const struct WindowTemplate sPageInfoTemplate[] =
         .width = 11,
         .height = 2,
         .paletteNum = 6,
-        .baseBlock = 471,
+        .baseBlock = 491,
     },
     [PSS_DATA_WINDOW_INFO_ID] = {
         .bg = 0,
@@ -640,7 +650,7 @@ static const struct WindowTemplate sPageInfoTemplate[] =
         .width = 7,
         .height = 2,
         .paletteNum = 6,
-        .baseBlock = 493,
+        .baseBlock = 513,
     },
     [PSS_DATA_WINDOW_EXP] = {
         .bg = 0,
@@ -649,7 +659,7 @@ static const struct WindowTemplate sPageInfoTemplate[] =
         .width = 6,
         .height = 4,
         .paletteNum = 6,
-        .baseBlock = 545,
+        .baseBlock = 565,
     },
 };
 static const struct WindowTemplate sPageEggInfoTemplate[] =
@@ -760,7 +770,7 @@ static const struct WindowTemplate sPageMovesTemplate[] = // This is used for bo
         .width = 9,
         .height = 10,
         .paletteNum = 6,
-        .baseBlock = 471,
+        .baseBlock = 491,
     },
     [PSS_DATA_WINDOW_MOVE_PP] = {
         .bg = 0,
@@ -769,7 +779,7 @@ static const struct WindowTemplate sPageMovesTemplate[] = // This is used for bo
         .width = 6,
         .height = 10,
         .paletteNum = 8,
-        .baseBlock = 561,
+        .baseBlock = 581,
     },
     [PSS_DATA_WINDOW_MOVE_DESCRIPTION] = {
         .bg = 0,
@@ -778,7 +788,7 @@ static const struct WindowTemplate sPageMovesTemplate[] = // This is used for bo
         .width = 20,
         .height = 4,
         .paletteNum = 6,
-        .baseBlock = 621,
+        .baseBlock = 641,
     },
 };
 static const u8 sTextColors[][3] =
@@ -2223,6 +2233,7 @@ static void CloseMoveSelectMode(u8 taskId)
         HandlePowerAccTilemap(0, 3);
         HandleAppealJamTilemap(0, 3, 0);
     }
+    PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM_LABEL);
     PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM);
     ScheduleBgCopyTilemapToVram(0);
     ScheduleBgCopyTilemapToVram(1);
@@ -2938,6 +2949,7 @@ static void PrintMonInfo(void)
     FillWindowPixelBuffer(PSS_LABEL_WINDOW_PORTRAIT_DEX_NUMBER, PIXEL_FILL(0));
     FillWindowPixelBuffer(PSS_LABEL_WINDOW_PORTRAIT_NICKNAME, PIXEL_FILL(0));
     FillWindowPixelBuffer(PSS_LABEL_WINDOW_PORTRAIT_SPECIES, PIXEL_FILL(0));
+    FillWindowPixelBuffer(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM_LABEL, PIXEL_FILL(0));
     FillWindowPixelBuffer(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM, PIXEL_FILL(0));
     if (!sMonSummaryScreen->summary.isEgg)
         PrintNotEggInfo();
@@ -2992,6 +3004,7 @@ static void PrintNotEggInfo(void)
     PrintHeldItemName();
     PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_NICKNAME);
     PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_SPECIES);
+    PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM_LABEL);
     PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM);
     TryDrawExperienceProgressBar();
 }
@@ -3000,6 +3013,7 @@ static void PrintEggInfo(void)
 {
     ClearWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_DEX_NUMBER);
     ClearWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_SPECIES);
+    ClearWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM_LABEL);
     ClearWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM);
     GetMonNickname(&sMonSummaryScreen->currentMon, gStringVar1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_PORTRAIT_NICKNAME, gStringVar1, 7, 1, 0, 1);
@@ -3579,6 +3593,7 @@ static void PrintHeldItemName(void)
 
     x = GetStringCenterAlignXOffset(FONT_NORMAL, text, 72) + 2;
 
+    PrintTextOnWindow(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM_LABEL, gText_ItemHGSS, 4, 0, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM, text, x, 0, 0, 0);
 }
 

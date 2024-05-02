@@ -1047,7 +1047,7 @@ extern const u8 gText_TrainerMemoHGSS[];
 extern const u8 gText_PkmnSkillsHGSS[];
 extern const u8 gText_BattleMovesHGSS[];
 extern const u8 gText_ContestMovesHGSS[];
-extern const u8 gText_InfoHGSS[];
+extern const u8 gText_ItemHGSS[];
 
 extern const u8 *const gBagMenu_ReturnToStrings[];
 extern const u8 *const gPyramidBagMenu_ReturnToStrings[];
