@@ -3246,10 +3246,12 @@ static void PrintMonOTID(void)
     }
 }
 
-static void UNUSED PrintMonAbilityName(void)
+static void PrintMonAbilityName(void)
 {
     u16 ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
+    ClearWindowTilemap(PSS_DATA_WINDOW_INFO_ABILITY);
     PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilitiesInfo[ability].name, 0, 1, 0, 1);
+    PutWindowTilemap(PSS_DATA_WINDOW_INFO_ABILITY);
 }
 
 static void UNUSED PrintMonAbilityDescription(void)
@@ -3479,7 +3481,7 @@ static void PrintSkillsPageText(void)
     PrintLeftColumnStats();
     BufferRightColumnStats();
     PrintRightColumnStats();
-    //PrintMonAbilityName();
+    PrintMonAbilityName();
     //PrintMonAbilityDescription();
 }
 
@@ -3508,7 +3510,7 @@ static void Task_PrintSkillsPage(u8 taskId)
         PrintRightColumnStats();
         break;
     case 7:
-        //PrintMonAbilityName();
+        PrintMonAbilityName();
         break;
     case 8:
         //PrintMonAbilityDescription();
