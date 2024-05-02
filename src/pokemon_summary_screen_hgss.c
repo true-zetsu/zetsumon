@@ -77,11 +77,11 @@ enum {
 #define PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL 9
 #define PSS_LABEL_WINDOW_POKEMON_INFO_TYPE 10
 #define PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE 11
+#define PSS_LABEL_WINDOW_POKEMON_SKILLS_EXP 12 // EXP, Next Level
 
 // Skills screen
-#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT 12 // HP, Attack, Defense
-#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_RIGHT 13 // Sp. Attack, Sp. Defense, Speed
-#define PSS_LABEL_WINDOW_POKEMON_SKILLS_EXP 14 // EXP, Next Level
+#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT 13 // HP, Attack, Defense
+#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_RIGHT 14 // Sp. Attack, Sp. Defense, Speed
 #define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATUS 15
 
 // Moves screen
@@ -93,23 +93,29 @@ enum {
 #define PSS_LABEL_WINDOW_PORTRAIT_DEX_NUMBER 19
 #define PSS_LABEL_WINDOW_PORTRAIT_NICKNAME 20 // The upper name
 #define PSS_LABEL_WINDOW_PORTRAIT_SPECIES 21 // The lower name
-#define PSS_LABEL_WINDOW_END 22
+#define PSS_DATA_WINDOW_SKILLS_HELD_ITEM 22
+#define PSS_LABEL_WINDOW_END 23
 
 // Dynamic fields for the Pokémon Info page
 #define PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER 0
 #define PSS_DATA_WINDOW_INFO_ID 1
-#define PSS_DATA_WINDOW_INFO_ABILITY 2
-#define PSS_DATA_WINDOW_INFO_MEMO 3
-#define PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER 4
-#define PSS_DATA_WINDOW_EGG_INFO_ID 5
-#define PSS_DATA_WINDOW_EGG_INFO_MEMO 6
+#define PSS_DATA_WINDOW_EXP 2 // Exp, next level
+
+// Dynamic fields for the Egg Pokémon Info page
+#define PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER 0
+#define PSS_DATA_WINDOW_EGG_INFO_ID 1
+#define PSS_DATA_WINDOW_EGG_INFO_STATE 2
+#define PSS_DATA_WINDOW_EGG_INFO_MEMO 3
+
+// Dynamic fields for the Trainer Memo page
+#define PSS_DATA_WINDOW_INFO_MEMO 0
 
 // Dynamic fields for the Pokémon Skills page
-#define PSS_DATA_WINDOW_SKILLS_HELD_ITEM 0
-#define PSS_DATA_WINDOW_SKILLS_RIBBON_COUNT 1
-#define PSS_DATA_WINDOW_SKILLS_STATS_LEFT 2 // HP, Attack, Defense
-#define PSS_DATA_WINDOW_SKILLS_STATS_RIGHT 3 // Sp. Attack, Sp. Defense, Speed
-#define PSS_DATA_WINDOW_EXP 4 // Exp, next level
+#define PSS_DATA_WINDOW_SKILLS_RIBBON_COUNT 0
+#define PSS_DATA_WINDOW_SKILLS_STATS_LEFT 1 // HP, Attack, Defense
+#define PSS_DATA_WINDOW_SKILLS_STATS_RIGHT 2 // Sp. Attack, Sp. Defense, Speed
+#define PSS_DATA_WINDOW_INFO_ABILITY_NAME 3
+#define PSS_DATA_WINDOW_INFO_ABILITY_DESCRIPTION 4
 
 // Dynamic fields for the Battle Moves and Contest Moves pages.
 #define PSS_DATA_WINDOW_MOVE_NAMES 0
@@ -506,6 +512,24 @@ static const struct WindowTemplate sSummaryTemplate[] =
         .paletteNum = 6,
         .baseBlock = 173,
     },
+    [PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE] = {
+        .bg = 0,
+        .tilemapLeft = 12,
+        .tilemapTop = 5,
+        .width = 18,
+        .height = 2,
+        .paletteNum = 6,
+        .baseBlock = 173,
+    },
+    [PSS_LABEL_WINDOW_POKEMON_SKILLS_EXP] = {
+        .bg = 0,
+        .tilemapLeft = 11,
+        .tilemapTop = 13,
+        .width = 11,
+        .height = 4,
+        .paletteNum = 6,
+        .baseBlock = 275,
+    },
     [PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT] = {
         .bg = 0,
         .tilemapLeft = 13,
@@ -523,15 +547,6 @@ static const struct WindowTemplate sSummaryTemplate[] =
         .height = 6,
         .paletteNum = 6,
         .baseBlock = 245,
-    },
-    [PSS_LABEL_WINDOW_POKEMON_SKILLS_EXP] = {
-        .bg = 0,
-        .tilemapLeft = 11,
-        .tilemapTop = 13,
-        .width = 11,
-        .height = 4,
-        .paletteNum = 6,
-        .baseBlock = 275,
     },
     [PSS_LABEL_WINDOW_POKEMON_SKILLS_STATUS] = {
         .bg = 0,
@@ -596,14 +611,14 @@ static const struct WindowTemplate sSummaryTemplate[] =
         .paletteNum = 6,
         .baseBlock = 415,
     },
-    [PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE] = {
+    [PSS_DATA_WINDOW_SKILLS_HELD_ITEM] = {
         .bg = 0,
-        .tilemapLeft = 12,
-        .tilemapTop = 5,
-        .width = 18,
+        .tilemapLeft = 10,
+        .tilemapTop = 4,
+        .width = 10,
         .height = 2,
         .paletteNum = 6,
-        .baseBlock = 173,
+        .baseBlock = 451,
     },
     [PSS_LABEL_WINDOW_END] = DUMMY_WIN_TEMPLATE
 };
@@ -627,24 +642,18 @@ static const struct WindowTemplate sPageInfoTemplate[] =
         .paletteNum = 6,
         .baseBlock = 473,
     },
-    [PSS_DATA_WINDOW_INFO_ABILITY] = {
+    [PSS_DATA_WINDOW_EXP] = {
         .bg = 0,
-        .tilemapLeft = 11,
-        .tilemapTop = 9,
-        .width = 18,
+        .tilemapLeft = 23,
+        .tilemapTop = 13,
+        .width = 6,
         .height = 4,
         .paletteNum = 6,
-        .baseBlock = 487,
+        .baseBlock = 545,
     },
-    [PSS_DATA_WINDOW_INFO_MEMO] = {
-        .bg = 0,
-        .tilemapLeft = 12,
-        .tilemapTop = 3,
-        .width = 18,
-        .height = 12,
-        .paletteNum = 6,
-        .baseBlock = 559,
-    },
+};
+static const struct WindowTemplate sPageEggInfoTemplate[] =
+{
     [PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER] = {
         .bg = 0,
         .tilemapLeft = 12,
@@ -663,6 +672,15 @@ static const struct WindowTemplate sPageInfoTemplate[] =
         .paletteNum = 6,
         .baseBlock = 473,
     },
+    [PSS_DATA_WINDOW_EGG_INFO_STATE] = {
+        .bg = 0,
+        .tilemapLeft = 11,
+        .tilemapTop = 9,
+        .width = 18,
+        .height = 4,
+        .paletteNum = 6,
+        .baseBlock = 487,
+    },
     [PSS_DATA_WINDOW_EGG_INFO_MEMO] = {
         .bg = 0,
         .tilemapLeft = 12,
@@ -673,17 +691,20 @@ static const struct WindowTemplate sPageInfoTemplate[] =
         .baseBlock = 559,
     },
 };
+static const struct WindowTemplate sPageMemoTemplate[] =
+{
+    [PSS_DATA_WINDOW_INFO_MEMO] = {
+        .bg = 0,
+        .tilemapLeft = 12,
+        .tilemapTop = 3,
+        .width = 18,
+        .height = 12,
+        .paletteNum = 6,
+        .baseBlock = 559,
+    },
+};
 static const struct WindowTemplate sPageSkillsTemplate[] =
 {
-    [PSS_DATA_WINDOW_SKILLS_HELD_ITEM] = {
-        .bg = 0,
-        .tilemapLeft = 10,
-        .tilemapTop = 4,
-        .width = 10,
-        .height = 2,
-        .paletteNum = 6,
-        .baseBlock = 451,
-    },
     [PSS_DATA_WINDOW_SKILLS_RIBBON_COUNT] = {
         .bg = 0,
         .tilemapLeft = 20,
@@ -711,14 +732,23 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
         .paletteNum = 6,
         .baseBlock = 527,
     },
-    [PSS_DATA_WINDOW_EXP] = {
+    [PSS_DATA_WINDOW_INFO_ABILITY_NAME] = {
         .bg = 0,
-        .tilemapLeft = 23,
-        .tilemapTop = 13,
-        .width = 6,
+        .tilemapLeft = 20,
+        .tilemapTop = 14,
+        .width = 10,
+        .height = 2,
+        .paletteNum = 6,
+        .baseBlock = 559,
+    },
+    [PSS_DATA_WINDOW_INFO_ABILITY_DESCRIPTION] = {
+        .bg = 0,
+        .tilemapLeft = 11,
+        .tilemapTop = 16,
+        .width = 18,
         .height = 4,
         .paletteNum = 6,
-        .baseBlock = 545,
+        .baseBlock = 601,
     },
 };
 static const struct WindowTemplate sPageMovesTemplate[] = // This is used for both battle and contest moves
@@ -3249,15 +3279,14 @@ static void PrintMonOTID(void)
 static void PrintMonAbilityName(void)
 {
     u16 ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
-    ClearWindowTilemap(PSS_DATA_WINDOW_INFO_ABILITY);
-    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilitiesInfo[ability].name, 0, 1, 0, 1);
-    PutWindowTilemap(PSS_DATA_WINDOW_INFO_ABILITY);
+    int x = GetStringCenterAlignXOffset(FONT_NORMAL, gAbilitiesInfo[ability].name, 78);
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_INFO_ABILITY_NAME), gAbilitiesInfo[ability].name, x, 0, 0, 0);
 }
 
-static void UNUSED PrintMonAbilityDescription(void)
+static void PrintMonAbilityDescription(void)
 {
     u16 ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
-    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilitiesInfo[ability].description, 0, 17, 0, 0);
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_INFO_ABILITY_DESCRIPTION), gAbilitiesInfo[ability].description, 0, 0, 0, 0);
 }
 
 static void BufferMonTrainerMemo(void)
@@ -3317,7 +3346,7 @@ static void BufferMonTrainerMemo(void)
 
 static void PrintMonTrainerMemo(void)
 {
-    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_MEMO), gStringVar4, 0, 1, 0, 0);
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageMemoTemplate, PSS_DATA_WINDOW_INFO_MEMO), gStringVar4, 0, 1, 0, 0);
 }
 
 static void BufferNatureString(void)
@@ -3390,7 +3419,7 @@ static bool8 IsInGamePartnerMon(void)
 
 static void PrintEggOTName(void)
 {
-    u32 windowId = AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER);
+    u32 windowId = AddWindowFromTemplateList(sPageEggInfoTemplate, PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER);
     u32 width = GetStringWidth(FONT_NORMAL, gText_OTSlashHGSS, 0) + 4;
     PrintTextOnWindow(windowId, gText_OTSlashHGSS, 0, 1, 0, 0);
     PrintTextOnWindow(windowId, gText_FiveMarks, width, 1, 0, 1);
@@ -3402,7 +3431,7 @@ static void PrintEggOTID(void)
     StringCopy(gStringVar1, gText_IDNumber2);
     StringAppend(gStringVar1, gText_FiveMarks);
     x = GetStringRightAlignXOffset(FONT_NORMAL, gStringVar1, 56);
-    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_EGG_INFO_ID), gStringVar1, x, 1, 0, 1);
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageEggInfoTemplate, PSS_DATA_WINDOW_EGG_INFO_ID), gStringVar1, x, 1, 0, 1);
 }
 
 static void PrintEggState(void)
@@ -3421,7 +3450,7 @@ static void PrintEggState(void)
     else
         text = gText_EggWillTakeALongTime;
 
-    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), text, 8, 1, 0, 0);
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageEggInfoTemplate, PSS_DATA_WINDOW_EGG_INFO_STATE), text, 8, 1, 0, 0);
 }
 
 static void PrintEggMemo(void)
@@ -3445,7 +3474,7 @@ static void PrintEggMemo(void)
         text = gText_OddEggFoundByCouple;
     }
 
-    PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_EGG_INFO_MEMO), text, 0, 8, 0, 0);
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageEggInfoTemplate, PSS_DATA_WINDOW_EGG_INFO_MEMO), text, 0, 8, 0, 0);
 }
 
 static void PrintMemoPageText(void)
@@ -3482,7 +3511,7 @@ static void PrintSkillsPageText(void)
     BufferRightColumnStats();
     PrintRightColumnStats();
     PrintMonAbilityName();
-    //PrintMonAbilityDescription();
+    PrintMonAbilityDescription();
 }
 
 static void Task_PrintSkillsPage(u8 taskId)
@@ -3513,7 +3542,7 @@ static void Task_PrintSkillsPage(u8 taskId)
         PrintMonAbilityName();
         break;
     case 8:
-        //PrintMonAbilityDescription();
+        PrintMonAbilityDescription();
         break;
     case 9:
         DestroyTask(taskId);
@@ -3544,6 +3573,8 @@ static void UNUSED PrintHeldItemName(void)
     }
 
     x = GetStringCenterAlignXOffset(FONT_NORMAL, text, 72) + 6;
+
+    // need to fix this
     PrintTextOnWindow(AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_SKILLS_HELD_ITEM), text, x, 1, 0, 0);
 }
 
@@ -3709,7 +3740,7 @@ static void PrintRightColumnStats(void)
 static void PrintExpPointsNextLevel(void)
 {
     struct PokeSummary *sum = &sMonSummaryScreen->summary;
-    u8 windowId = AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_EXP);
+    u8 windowId = AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_EXP);
     int x;
     u32 expToNextLevel;
 
