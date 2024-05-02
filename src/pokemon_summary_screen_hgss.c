@@ -739,7 +739,7 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
         .width = 10,
         .height = 2,
         .paletteNum = 6,
-        .baseBlock = 559,
+        .baseBlock = 563,
     },
     [PSS_DATA_WINDOW_INFO_ABILITY_DESCRIPTION] = {
         .bg = 0,
