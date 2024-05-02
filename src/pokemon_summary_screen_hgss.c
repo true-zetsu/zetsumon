@@ -130,15 +130,15 @@ enum
     SPRITE_ARR_ID_COUNT = SPRITE_ARR_ID_MOVE_SELECTOR2 + MOVE_SELECTOR_SPRITES_COUNT
 };
 
-#define TILE_EMPTY_APPEAL_HEART  0x109C //0x1039
-#define TILE_FILLED_APPEAL_HEART 0x109D //0x103A
-#define TILE_FILLED_JAM_HEART    0x109F //0x103C
-#define TILE_EMPTY_JAM_HEART     0x109E //0x103D
-#define TILE_EXP_BAR_NO_TICK     0x1088 //0x2062
-#define TILE_EXP_BAR_FULL_TICK   0x1091 //0x206A
-#define TILE_POKERUS_CURED       0x10A9 //0x2C
-#define TILE_POKERUS_EMPTY       0x1062 //0x81A
-#define TILE_POKERUS_LOCATION    0x1C0  //0x223
+#define TILE_EMPTY_APPEAL_HEART  0x109C
+#define TILE_FILLED_APPEAL_HEART 0x109D
+#define TILE_FILLED_JAM_HEART    0x109F
+#define TILE_EMPTY_JAM_HEART     0x109E
+#define TILE_EXP_BAR_NO_TICK     0x1088
+#define TILE_EXP_BAR_FULL_TICK   0x1091
+#define TILE_POKERUS_CURED       0x109B
+#define TILE_POKERUS_EMPTY       0x1062
+#define TILE_POKERUS_LOCATION    0x1C0
 
 static EWRAM_DATA struct PokemonSummaryScreenData
 {
@@ -1715,11 +1715,11 @@ static void Task_HandleInput(u8 taskId)
     #if SUMMARY_SCREEN_STAT_DISPLAY == TRUE
         else if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS)
         {
-            if (JOY_NEW(R_BUTTON))
+            if (JOY_NEW(L_BUTTON))
             {
                 BufferIvOrEvStats(SUMMARY_SCREEN_IV_MODE);
             }
-            else if (JOY_NEW(L_BUTTON))
+            else if (JOY_NEW(R_BUTTON))
             {
                 BufferIvOrEvStats(SUMMARY_SCREEN_EV_MODE);
             }
