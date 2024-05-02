@@ -75,28 +75,23 @@ enum {
 
 // Info screen
 #define PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL 9
-#define PSS_LABEL_WINDOW_POKEMON_INFO_TITLES 10
-#define PSS_LABEL_WINDOW_POKEMON_INFO_EXP 11 // EXP, Next Level
-
-// Memo screen
-#define PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE 12
 
 // Skills screen
-#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT 13 // HP, Attack, Defense
-#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_RIGHT 14 // Sp. Attack, Sp. Defense, Speed
-#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATUS 15
+#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT 10 // HP, Attack, Defense
+#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_RIGHT 11 // Sp. Attack, Sp. Defense, Speed
+#define PSS_LABEL_WINDOW_POKEMON_SKILLS_STATUS 12
 
 // Moves screen
-#define PSS_LABEL_WINDOW_MOVES_POWER_ACC 16 // Also contains the power and accuracy values
-#define PSS_LABEL_WINDOW_MOVES_APPEAL_JAM 17
-#define PSS_LABEL_WINDOW_UNUSED2 18
+#define PSS_LABEL_WINDOW_MOVES_POWER_ACC 13 // Also contains the power and accuracy values
+#define PSS_LABEL_WINDOW_MOVES_APPEAL_JAM 14
+#define PSS_LABEL_WINDOW_UNUSED2 15
 
 // Above/below the pokemon's portrait (left)
-#define PSS_LABEL_WINDOW_PORTRAIT_LEVEL 19
-#define PSS_LABEL_WINDOW_PORTRAIT_NICKNAME 20 // The upper name
-#define PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM 21
-#define PSS_DATA_WINDOW_PORTRAIT_HELD_ITEM 22
-#define PSS_LABEL_WINDOW_END 23
+#define PSS_LABEL_WINDOW_PORTRAIT_LEVEL 16
+#define PSS_LABEL_WINDOW_PORTRAIT_NICKNAME 17 // The upper name
+#define PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM 18
+#define PSS_DATA_WINDOW_PORTRAIT_HELD_ITEM 19
+#define PSS_LABEL_WINDOW_END 20
 
 // Dynamic fields for the Pokémon Info page
 #define PSS_DATA_WINDOW_INFO_ORIGINAL_TRAINER 0
@@ -104,12 +99,15 @@ enum {
 #define PSS_DATA_WINDOW_INFO_EXP 2 // Exp, next level
 #define PSS_DATA_WINDOW_INFO_DEX_NUMBER 3
 #define PSS_DATA_WINDOW_INFO_SPECIES 4
+#define PSS_LABEL_WINDOW_POKEMON_INFO_EXP 5 // EXP, Next Level
+#define PSS_LABEL_WINDOW_POKEMON_INFO_TITLES 6
 
 // Dynamic fields for the Egg Pokémon Info page
 #define PSS_DATA_WINDOW_EGG_INFO_ORIGINAL_TRAINER 0
 #define PSS_DATA_WINDOW_EGG_INFO_ID 1
 #define PSS_DATA_WINDOW_EGG_INFO_STATE 2
 #define PSS_DATA_WINDOW_EGG_INFO_MEMO 3
+#define PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE 4
 
 // Dynamic fields for the Trainer Memo page
 #define PSS_DATA_WINDOW_INFO_MEMO 0
@@ -283,10 +281,12 @@ static void PrintPageSpecificText(u8);
 static void CreateTextPrinterTask(u8);
 static void PrintInfoPageText(void);
 static void Task_PrintInfoPage(u8);
+static void PrintMonInfoLabels(void);
 static void PrintMonDexNumber(void);
 static void PrintMonSpecies(void);
 static void PrintMonOTName(void);
 static void PrintMonOTID(void);
+static void PrintMonExpLabels(void);
 static void PrintMonAbilityName(void);
 static void PrintMonAbilityDescription(void);
 static void BufferMonTrainerMemo(void);
@@ -296,6 +296,7 @@ static void GetMetLevelString(u8 *);
 static bool8 DoesMonOTMatchOwner(void);
 static bool8 DidMonComeFromGBAGames(void);
 static bool8 IsInGamePartnerMon(void);
+static void PrintEggType(void);
 static void PrintEggOTName(void);
 static void PrintEggOTID(void);
 static void PrintEggState(void);
@@ -509,33 +510,6 @@ static const struct WindowTemplate sSummaryTemplate[] =
         .paletteNum = 6,
         .baseBlock = 137,
     },
-    [PSS_LABEL_WINDOW_POKEMON_INFO_TITLES] = {
-        .bg = 0,
-        .tilemapLeft = 11,
-        .tilemapTop = 3,
-        .width = 3,
-        .height = 12,
-        .paletteNum = 6,
-        .baseBlock = 173,
-    },
-    [PSS_LABEL_WINDOW_POKEMON_INFO_EXP] = {
-        .bg = 0,
-        .tilemapLeft = 11,
-        .tilemapTop = 13,
-        .width = 11,
-        .height = 4,
-        .paletteNum = 6,
-        .baseBlock = 275,
-    },
-    [PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE] = {
-        .bg = 0,
-        .tilemapLeft = 12,
-        .tilemapTop = 5,
-        .width = 18,
-        .height = 2,
-        .paletteNum = 6,
-        .baseBlock = 173,
-    },
     [PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT] = {
         .bg = 0,
         .tilemapLeft = 13,
@@ -675,6 +649,24 @@ static const struct WindowTemplate sPageInfoTemplate[] =
         .paletteNum = 6,
         .baseBlock = 599,
     },
+    [PSS_LABEL_WINDOW_POKEMON_INFO_EXP] = {
+        .bg = 0,
+        .tilemapLeft = 11,
+        .tilemapTop = 13,
+        .width = 11,
+        .height = 4,
+        .paletteNum = 6,
+        .baseBlock = 275,
+    },
+    [PSS_LABEL_WINDOW_POKEMON_INFO_TITLES] = {
+        .bg = 0,
+        .tilemapLeft = 11,
+        .tilemapTop = 3,
+        .width = 3,
+        .height = 10,
+        .paletteNum = 6,
+        .baseBlock = 173,
+    },
 };
 static const struct WindowTemplate sPageEggInfoTemplate[] =
 {
@@ -713,6 +705,15 @@ static const struct WindowTemplate sPageEggInfoTemplate[] =
         .height = 6,
         .paletteNum = 6,
         .baseBlock = 559,
+    },
+    [PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE] = {
+        .bg = 0,
+        .tilemapLeft = 12,
+        .tilemapTop = 5,
+        .width = 18,
+        .height = 2,
+        .paletteNum = 6,
+        .baseBlock = 173,
     },
 };
 static const struct WindowTemplate sPageMemoTemplate[] =
@@ -2997,13 +2998,6 @@ static void PrintPageNamesAndStats(void)
     PrintTextOnWindowWithFont(PSS_LABEL_WINDOW_CONTEST_MOVES_TITLE, gText_ContestMovesHGSS, 13, 4, 0, 1, FONT_SMALL);
 
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL, gText_RentalPkmnHGSS, 0, 1, 0, 1);
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE, gText_TypeSlashHGSS, 0, 0, 0, 0);
-
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_TITLES, gText_DexNumberHGSS, 6, 1, 0, 1);
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_TITLES, gText_SpeciesHGSS, 6, 17, 0, 1);
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_TITLES, gText_TypeSlashHGSS, 6, 33, 0, 1);
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_TITLES, gText_OTSlashHGSS, 6, 49, 0, 1);
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_TITLES, gText_IDNumberHGSS, 6, 65, 0, 1);
 
     statsXPos = 3 + GetStringCenterAlignXOffset(FONT_NORMAL, gText_HPHGSS, 36);
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT, gText_HPHGSS, statsXPos, 0, 0, 1);
@@ -3018,8 +3012,6 @@ static void PrintPageNamesAndStats(void)
     statsXPos = 3 + GetStringCenterAlignXOffset(FONT_NORMAL, gText_SpeedHGSS, 36);
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_RIGHT, gText_SpeedHGSS, statsXPos, 32, 0, 1);
 
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_EXP, gText_ExpPointsHGSS, 6, 1, 0, 1);
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_EXP, gText_NextLvHGSS, 6, 17, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, gText_PowerHGSS, 2, 0, 0, 1);
     PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_POWER_ACC, gText_AccuracyHGSS, 2, 17, 0, 0);
     PrintTextOnWindow(PSS_LABEL_WINDOW_MOVES_APPEAL_JAM, gText_AppealHGSS, 0, 1, 0, 1);
@@ -3040,11 +3032,8 @@ static void PutPageWindowTilemaps(u8 page)
     {
     case PSS_PAGE_INFO:
         PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_TITLE);
-        //PutWindowTilemap(PSS_LABEL_WINDOW_PROMPT_CANCEL);
         if (InBattleFactory() == TRUE || InSlateportBattleTent() == TRUE)
             PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL);
-        PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_TITLES);
-        PutWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_EXP);
         break;
     case PSS_PAGE_MEMO:
         PutWindowTilemap(PSS_LABEL_WINDOW_TRAINER_MEMO_TITLE);
@@ -3093,11 +3082,8 @@ static void ClearPageWindowTilemaps(u8 page)
     switch (page)
     {
     case PSS_PAGE_INFO:
-        //ClearWindowTilemap(PSS_LABEL_WINDOW_PROMPT_CANCEL);
         if (InBattleFactory() == TRUE || InSlateportBattleTent() == TRUE)
             ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL);
-        ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_TITLES);
-        ClearWindowTilemap(PSS_LABEL_WINDOW_POKEMON_INFO_EXP);
         break;
     case PSS_PAGE_MEMO:
         break;
@@ -3180,6 +3166,7 @@ static void PrintInfoPageText(void)
 {
     if (sMonSummaryScreen->summary.isEgg)
     {
+        PrintEggType();
         PrintEggOTName();
         PrintEggOTID();
         PrintEggState();
@@ -3187,10 +3174,12 @@ static void PrintInfoPageText(void)
     }
     else
     {
+        PrintMonInfoLabels();
         PrintMonDexNumber();
         PrintMonSpecies();
         PrintMonOTName();
         PrintMonOTID();
+        PrintMonExpLabels();
         PrintExpPointsNextLevel();
     }
 }
@@ -3202,25 +3191,41 @@ static void Task_PrintInfoPage(u8 taskId)
     switch (data[0])
     {
     case 1:
-        PrintMonDexNumber();
+        PrintMonInfoLabels();
         break;
     case 2:
-        PrintMonSpecies();
+        PrintMonDexNumber();
         break;
     case 3:
-        PrintMonOTName();
+        PrintMonSpecies();
         break;
     case 4:
-        PrintMonOTID();
+        PrintMonOTName();
         break;
     case 5:
-        PrintExpPointsNextLevel();
+        PrintMonOTID();
         break;
     case 6:
+        PrintMonExpLabels();
+        break;
+    case 7:
+        PrintExpPointsNextLevel();
+        break;
+    case 8:
         DestroyTask(taskId);
         return;
     }
     data[0]++;
+}
+
+static void PrintMonInfoLabels(void)
+{
+    int windowId = AddWindowFromTemplateList(sPageInfoTemplate, PSS_LABEL_WINDOW_POKEMON_INFO_TITLES);
+    PrintTextOnWindow(windowId, gText_DexNumberHGSS, 6, 1, 0, 1);
+    PrintTextOnWindow(windowId, gText_SpeciesHGSS, 6, 17, 0, 1);
+    PrintTextOnWindow(windowId, gText_TypeSlashHGSS, 6, 33, 0, 1);
+    PrintTextOnWindow(windowId, gText_OTSlashHGSS, 6, 49, 0, 1);
+    PrintTextOnWindow(windowId, gText_IDNumberHGSS, 6, 65, 0, 1);
 }
 
 static void PrintMonDexNumber(void)
@@ -3282,6 +3287,13 @@ static void PrintMonOTID(void)
         xPos = GetStringRightAlignXOffset(FONT_NORMAL, gStringVar1, 56);
         PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ID), gStringVar1, xPos, 1, 0, 1);
     }
+}
+
+static void PrintMonExpLabels(void)
+{
+    int windowId = AddWindowFromTemplateList(sPageInfoTemplate, PSS_LABEL_WINDOW_POKEMON_INFO_EXP);
+    PrintTextOnWindow(windowId, gText_ExpPointsHGSS, 6, 1, 0, 1);
+    PrintTextOnWindow(windowId, gText_NextLvHGSS, 6, 17, 0, 1);
 }
 
 static void PrintMonAbilityName(void)
@@ -3423,6 +3435,11 @@ static bool8 IsInGamePartnerMon(void)
             return TRUE;
     }
     return FALSE;
+}
+
+static void PrintEggType(void)
+{
+    PrintTextOnWindow(AddWindowFromTemplateList(sPageEggInfoTemplate, PSS_LABEL_WINDOW_POKEMON_EGG_INFO_TYPE), gText_TypeSlashHGSS, 0, 0, 0, 0);
 }
 
 static void PrintEggOTName(void)
