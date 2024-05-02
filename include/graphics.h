@@ -1969,6 +1969,15 @@ extern const u32 gSummaryPage_InfoEgg_Tilemap[];
 extern const u32 gSummaryPage_Skills_Tilemap[];
 extern const u32 gSummaryPage_BattleMoves_Tilemap[];
 extern const u32 gSummaryPage_ContestMoves_Tilemap[];
+extern const u32 gSummaryScreen_HGSS_Gfx[];
+extern const u32 gSummaryScreen_HGSS_Pal[];
+extern const u32 gSummaryPage_Info_HGSS_Tilemap[];
+extern const u32 gSummaryPage_Memo_HGSS_Tilemap[];
+extern const u32 gSummaryPage_InfoEgg_HGSS_Tilemap[];
+extern const u32 gSummaryPage_Skills_HGSS_Tilemap[];
+extern const u32 gSummaryPage_BattleMoves_HGSS_Tilemap[];
+extern const u32 gSummaryPage_ContestMoves_HGSS_Tilemap[];
+
 extern const u16 gPPTextPalette[];
 extern const u32 gMoveTypes_Pal[];
 
