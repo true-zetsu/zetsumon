@@ -1626,6 +1626,8 @@ const u32 gMoveTypes_Pal[] = INCBIN_U32("graphics/types/move_types.gbapal.lz");
 
 const u32 gSummaryMoveSelect_Gfx[] = INCBIN_U32("graphics/summary_screen/move_select.4bpp.lz");
 const u32 gSummaryMoveSelect_Pal[] = INCBIN_U32("graphics/summary_screen/move_select.gbapal.lz");
+const u32 gSummaryMoveSelectHGSS_Gfx[] = INCBIN_U32("graphics/summary_screen/hgss/move_select.4bpp.lz");
+const u32 gSummaryMoveSelectHGSS_Pal[] = INCBIN_U32("graphics/summary_screen/hgss/move_select.gbapal.lz");
 
 const u32 gSummaryScreen_Gfx[]                = INCBIN_U32("graphics/summary_screen/tiles.4bpp.lz");
 const u32 gSummaryScreen_Pal[]                = INCBIN_U32("graphics/summary_screen/tiles.gbapal.lz");
