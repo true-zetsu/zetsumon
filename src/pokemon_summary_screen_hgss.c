@@ -4449,8 +4449,8 @@ static u8 *GetCharacteristic(void)
 {
     u16 monIVs[NUM_STATS];
     u8 highestIV, highestCount, highestIndex, tiebreaker;
-    u8 i, j;
-    bool8 highestIVs[NUM_STATS] = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE };
+    u8 i;
+    bool8 highestIVs[NUM_STATS] = { FALSE };
 
     monIVs[STAT_HP] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP_IV);
     monIVs[STAT_ATK] = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_ATK_IV);
@@ -4467,11 +4467,8 @@ static u8 *GetCharacteristic(void)
     {
         if (monIVs[i] > highestIV) 
         {
-            for (j = 0; j < i; j++) 
-                highestIVs[j] = FALSE;
-            
-            highestIVs[i] = TRUE;
             highestIV = monIVs[i];
+            memset(highestIVs, FALSE, sizeof(highestIVs));
         }
 
         if (monIVs[i] == highestIV)
@@ -4488,14 +4485,11 @@ static u8 *GetCharacteristic(void)
     if (highestCount > 1)
     {
         tiebreaker = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PERSONALITY) % NUM_STATS;
-        highestIndex = NUM_STATS;
-        do
+        while (!highestIVs[tiebreaker])
         {
-            if (highestIVs[tiebreaker])
-                highestIndex = tiebreaker;
-            else
-                tiebreaker = (tiebreaker + 1 > NUM_STATS - 1) ? 0 : tiebreaker + 1;
-        } while (highestIndex == NUM_STATS);
+            tiebreaker = (tiebreaker + 1) % NUM_STATS;
+        }
+        highestIndex = tiebreaker;
     }
 
     return (u8 *)sCharacteristics[highestIndex][highestIV % NUM_CHARACTERISTICS];
