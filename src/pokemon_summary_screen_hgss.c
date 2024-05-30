@@ -504,8 +504,8 @@ static const struct WindowTemplate sSummaryTemplate[] =
     },
     [PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL] = {
         .bg = 0,
-        .tilemapLeft = 11,
-        .tilemapTop = 4,
+        .tilemapLeft = 21,
+        .tilemapTop = 9,
         .width = 18,
         .height = 2,
         .paletteNum = 6,
@@ -2885,7 +2885,7 @@ static void PrintPageNamesAndStats(void)
     PrintTextOnWindowWithFont(PSS_LABEL_WINDOW_BATTLE_MOVES_TITLE, gText_BattleMovesHGSS, 13, 4, 0, 1, FONT_SMALL);
     PrintTextOnWindowWithFont(PSS_LABEL_WINDOW_CONTEST_MOVES_TITLE, gText_ContestMovesHGSS, 13, 4, 0, 1, FONT_SMALL);
 
-    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL, gText_RentalPkmnHGSS, 0, 1, 0, 1);
+    PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_INFO_RENTAL, gText_RentalPkmnHGSS, 0, 1, 0, 0);
 
     statsXPos = 3 + GetStringCenterAlignXOffset(FONT_NORMAL, gText_HPHGSS, 36);
     PrintTextOnWindow(PSS_LABEL_WINDOW_POKEMON_SKILLS_STATS_LEFT, gText_HPHGSS, statsXPos, 0, 0, 1);
@@ -3211,6 +3211,10 @@ static void BufferMonTrainerMemo(void)
     if (InBattleFactory() == TRUE || InSlateportBattleTent() == TRUE || IsInGamePartnerMon() == TRUE)
     {
         DynamicPlaceholderTextUtil_ExpandPlaceholders(gStringVar4, gText_XNature);
+        StringAppend(gStringVar4, gText_NewLine2);
+        StringAppend(gStringVar4, gText_NewLine2);
+        StringAppend(gStringVar4, gText_NewLine2);
+        StringAppend(gStringVar4, GetCharacteristic());
     }
     else
     {
