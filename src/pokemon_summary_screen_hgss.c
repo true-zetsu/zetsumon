@@ -784,7 +784,7 @@ static const struct WindowTemplate sPageMovesTemplate[] = // This is used for bo
         .tilemapLeft = 15,
         .tilemapTop = 3,
         .width = 9,
-        .height = 10,
+        .height = 11,
         .paletteNum = 6,
         .baseBlock = 382,
     },
@@ -793,18 +793,18 @@ static const struct WindowTemplate sPageMovesTemplate[] = // This is used for bo
         .tilemapLeft = 24,
         .tilemapTop = 3,
         .width = 6,
-        .height = 10,
+        .height = 11,
         .paletteNum = 8,
-        .baseBlock = 472,
+        .baseBlock = 481,
     },
     [PSS_DATA_WINDOW_MOVE_DESCRIPTION] = {
         .bg = 0,
         .tilemapLeft = 11,
-        .tilemapTop = 15,
+        .tilemapTop = 16,
         .width = 20,
         .height = 4,
         .paletteNum = 6,
-        .baseBlock = 532,
+        .baseBlock = 547,
     },
 };
 static const u8 sTextColors[][3] =
@@ -2236,9 +2236,9 @@ static void CloseMoveSelectMode(u8 taskId)
         DestroyCategoryIcon();
         HandlePowerAccTilemap(0, 3);
         HandleAppealJamTilemap(0, 3, 0);
+        PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM);
+        PutWindowTilemap(PSS_DATA_WINDOW_PORTRAIT_HELD_ITEM);
     }
-    PutWindowTilemap(PSS_LABEL_WINDOW_PORTRAIT_HELD_ITEM);
-    PutWindowTilemap(PSS_DATA_WINDOW_PORTRAIT_HELD_ITEM);
     ScheduleBgCopyTilemapToVram(0);
     ScheduleBgCopyTilemapToVram(1);
     ScheduleBgCopyTilemapToVram(2);
@@ -2605,7 +2605,7 @@ static void Task_ShowAppealJamWindow(u8 taskId)
     {
         if (data[0] < 0)
         {
-            if (sMonSummaryScreen->currPageIndex == PSS_PAGE_CONTEST_MOVES && FuncIsActiveTask(PssScrollRight) == 0)
+            if (sMonSummaryScreen->currPageIndex == PSS_PAGE_CONTEST_MOVES)
                 PutWindowTilemap(PSS_LABEL_WINDOW_MOVES_APPEAL_JAM);
             DrawContestMoveHearts(data[2]);
         }
@@ -3897,18 +3897,18 @@ static void PrintNewMoveDetailsOrCancelText(void)
 
     if (sMonSummaryScreen->newMove == MOVE_NONE)
     {
-        PrintTextOnWindowWithFont(windowId1, gText_Cancel, 0, 65, 0, 1, FONT_SMALL);
+        PrintTextOnWindowWithFont(windowId1, gText_Cancel, 0, 68, 0, 1, FONT_SMALL);
     }
     else
     {
         u16 move = sMonSummaryScreen->newMove;
-        PrintTextOnWindowWithFont(windowId1, GetMoveName(move), 4, 65, 0, 5, FONT_SMALL);
+        PrintTextOnWindowWithFont(windowId1, GetMoveName(move), 4, 68, 0, 5, FONT_SMALL);
         ConvertIntToDecimalStringN(gStringVar1, gMovesInfo[move].pp, STR_CONV_MODE_RIGHT_ALIGN, 2);
         DynamicPlaceholderTextUtil_Reset();
         DynamicPlaceholderTextUtil_SetPlaceholderPtr(0, gStringVar1);
         DynamicPlaceholderTextUtil_SetPlaceholderPtr(1, gStringVar1);
         DynamicPlaceholderTextUtil_ExpandPlaceholders(gStringVar4, sMovesPPLayout);
-        PrintTextOnWindowWithFont(windowId2, gStringVar4, GetStringRightAlignXOffset(FONT_NORMAL, gStringVar4, 44) + 4, 65, 0, 12, FONT_SMALL);
+        PrintTextOnWindowWithFont(windowId2, gStringVar4, GetStringRightAlignXOffset(FONT_NORMAL, gStringVar4, 44) + 4, 68, 0, 12, FONT_SMALL);
     }
 }
 
@@ -4115,12 +4115,12 @@ static void SetNewMoveTypeIcon(void)
                 if (type >= TYPE_MYSTERY)
                     type++;
                 type |= 0xC0;
-                SetTypeSpritePosAndPalHGSS(type & 0x3F, 90, 88, SPRITE_ARR_ID_TYPE + 4);
+                SetTypeSpritePosAndPalHGSS(type & 0x3F, 90, 92, SPRITE_ARR_ID_TYPE + 4);
             } else {
-                SetTypeSpritePosAndPalHGSS(gMovesInfo[sMonSummaryScreen->newMove].type, 90, 88, SPRITE_ARR_ID_TYPE + 4);
+                SetTypeSpritePosAndPalHGSS(gMovesInfo[sMonSummaryScreen->newMove].type, 90, 92, SPRITE_ARR_ID_TYPE + 4);
             }
         else
-            SetTypeSpritePosAndPalHGSS(NUMBER_OF_MON_TYPES + gMovesInfo[sMonSummaryScreen->newMove].contestCategory, 90, 88, SPRITE_ARR_ID_TYPE + 4);
+            SetTypeSpritePosAndPalHGSS(NUMBER_OF_MON_TYPES + gMovesInfo[sMonSummaryScreen->newMove].contestCategory, 90, 92, SPRITE_ARR_ID_TYPE + 4);
     }
 }
 
@@ -4367,7 +4367,10 @@ static void SpriteCB_MoveSelector(struct Sprite *sprite)
     }
 
     if (sprite->data[0] == SPRITE_ARR_ID_MOVE_SELECTOR1)
-        sprite->y2 = sMonSummaryScreen->firstMoveIndex * 16;
+        if (sMonSummaryScreen->firstMoveIndex == MAX_MON_MOVES)
+            sprite->y2 = sMonSummaryScreen->firstMoveIndex * 16 + 4;
+        else
+            sprite->y2 = sMonSummaryScreen->firstMoveIndex * 16;
     else
         sprite->y2 = sMonSummaryScreen->secondMoveIndex * 16;
 }
