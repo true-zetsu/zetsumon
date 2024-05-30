@@ -2573,20 +2573,6 @@ static void Task_ShowPowerAccWindow(u8 taskId)
     ScheduleBgCopyTilemapToVram(2);
 }
 
-static void HandlePowerAccTilemap(u16 a, s16 b)
-{
-    if (b > sBattleMoveTilemapCtrl.field_6)
-        b = sBattleMoveTilemapCtrl.field_6;
-    if (b != 0 && b != sBattleMoveTilemapCtrl.field_6)
-    {
-        u8 taskId = FindTaskIdByFunc(Task_ShowPowerAccWindow);
-        if (taskId == TASK_NONE)
-            taskId = CreateTask(Task_ShowPowerAccWindow, 8);
-        gTasks[taskId].data[0] = b;
-        gTasks[taskId].data[1] = a;
-    }
-}
-
 static void HandleAppealJamTilemap(u16 a, s16 b, u16 move)
 {
     if (b > sContestMoveTilemapCtrl.field_6)
