@@ -760,9 +760,9 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
     },
     [PSS_DATA_WINDOW_INFO_ABILITY_NAME] = {
         .bg = 0,
-        .tilemapLeft = 20,
+        .tilemapLeft = 19,
         .tilemapTop = 14,
-        .width = 10,
+        .width = 11,
         .height = 2,
         .paletteNum = 6,
         .baseBlock = 474,
@@ -774,7 +774,7 @@ static const struct WindowTemplate sPageSkillsTemplate[] =
         .width = 18,
         .height = 4,
         .paletteNum = 6,
-        .baseBlock = 494,
+        .baseBlock = 496,
     },
 };
 static const struct WindowTemplate sPageMovesTemplate[] = // This is used for both battle and contest moves
@@ -3188,7 +3188,7 @@ static void PrintMonExpLabels(void)
 static void PrintMonAbilityName(void)
 {
     u16 ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
-    int x = GetStringCenterAlignXOffset(FONT_NORMAL, gAbilitiesInfo[ability].name, 78);
+    int x = GetStringCenterAlignXOffset(FONT_NORMAL, gAbilitiesInfo[ability].name, 88);
     PrintTextOnWindow(AddWindowFromTemplateList(sPageSkillsTemplate, PSS_DATA_WINDOW_INFO_ABILITY_NAME), gAbilitiesInfo[ability].name, x, 0, 0, 0);
 }
 
