@@ -4486,9 +4486,7 @@ static u8 *GetCharacteristic(void)
     {
         tiebreaker = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_PERSONALITY) % NUM_STATS;
         while (!highestIVs[tiebreaker])
-        {
             tiebreaker = (tiebreaker + 1) % NUM_STATS;
-        }
         highestIndex = tiebreaker;
     }
 
